@@ -28,8 +28,15 @@ public class BestplacesScrub {
 			//BestplacesScrub.mineClimate("california", "los_angeles");
 			//BestplacesScrub.minePeople("california", "los_angeles");
 			//BestplacesScrub.mineHealth("california", "los_angeles");
-			BestplacesScrub.mineEconomy("california", "los_angeles");
-			//printPage("http://www.bestplaces.net/economy/city/california/los_angeles");
+			//BestplacesScrub.mineEconomy("california", "los_angeles");
+			//BestplacesScrub.mineHousing("california", "los_angeles");
+			//BestplacesScrub.mineCrime("california", "los_angeles");
+			//BestplacesScrub.mineEducation("california", "los_angeles");
+			//BestplacesScrub.mineTransportation("california", "los_angeles");
+			//BestplacesScrub.mineCost("california", "los_angeles");
+			//BestplacesScrub.mineReligion("california", "los_angeles");
+			BestplacesScrub.mineVoting("california", "los_angeles");
+			//printPage("http://www.bestplaces.net/religion/city/california/los_angeles");
 
 		}
 		catch (Exception err){
@@ -37,6 +44,76 @@ public class BestplacesScrub {
 		}
 		//testMatch();
 
+	}
+	public static void mineVoting(String state, String city) throws Exception{
+
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<String> attrNames = new ArrayList<String>(Arrays.asList("Democrat","Republican","Independent Other"));
+		//		-- All numbers are percentages
+		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
+		for (String attr : attrNames){
+			patterns.add(Pattern.compile(">"+attr+"<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		}
+		minePrint("voting",state,city,patterns,attrValues,attrNames);
+	}
+	public static void mineReligion(String state, String city) throws Exception{
+
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<String> attrNames = new ArrayList<String>(Arrays.asList("Percent Religious","Catholic","LDS","Baptist","Episcopalian","Pentecostal","Lutheran",
+				"Methodist","Presbyterian","Other Christian","Jewish","Eastern","Islam"));
+		//		-- All numbers are percentages
+		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
+		for (String attr : attrNames){
+			patterns.add(Pattern.compile(">"+attr+"<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		}
+		minePrint("religion",state,city,patterns,attrValues,attrNames);
+	}
+	public static void mineCost(String state, String city) throws Exception{
+
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<String> attrNames = new ArrayList<String>(Arrays.asList("overallCost"));
+		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
+		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
+		patterns.add(Pattern.compile(">Overall<.*?>("+decRegex+")<",Pattern.CANON_EQ));//100 is nation average
+		minePrint("cost_of_living",state,city,patterns,attrValues,attrNames);
+	}
+	public static void mineTransportation(String state, String city) throws Exception{
+
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<String> attrNames = new ArrayList<String>(Arrays.asList("CommuteTime"));
+		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
+		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
+		patterns.add(Pattern.compile(">Commute Time<.*?>("+decRegex+")<",Pattern.CANON_EQ));
+		minePrint("transportation",state,city,patterns,attrValues,attrNames);
+	}
+	public static void mineEducation(String state, String city) throws Exception{
+
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<String> attrNames = new ArrayList<String>(Arrays.asList("Pupil/Teacher"));
+		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
+		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
+		patterns.add(Pattern.compile(">Pupil/Teacher Ratio<.*?>("+decRegex+")<",Pattern.CANON_EQ));
+		minePrint("education",state,city,patterns,attrValues,attrNames);
+	}
+	public static void mineCrime(String state, String city) throws Exception{
+
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<String> attrNames = new ArrayList<String>(Arrays.asList("violendCrime", "propertyCrime"));
+		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
+		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
+		patterns.add(Pattern.compile(">Violent Crime<.*?>("+decRegex+")<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Property Crime<.*?>("+decRegex+")<",Pattern.CANON_EQ));
+		minePrint("crime",state,city,patterns,attrValues,attrNames);
+	}
+	public static void mineHousing(String state, String city) throws Exception{
+
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<String> attrNames = new ArrayList<String>(Arrays.asList("medianCost", "propertyTaxRate"));
+
+		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
+		patterns.add(Pattern.compile(">Median Home Cost<.*?>\\$(\\d{1,3}\\,?\\d{0,3}\\,?\\d{0,3})<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Property Tax Rate<.*?>\\$("+decRegex+")<",Pattern.CANON_EQ));
+		minePrint("housing",state,city,patterns,attrValues,attrNames);
 	}
 	public static void mineEconomy(String state, String city) throws Exception{
 
