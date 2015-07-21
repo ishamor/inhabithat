@@ -9,6 +9,7 @@ public class InhabithatConfig {
 	public String homePath;
 	public String dataPath;
 	public String citiesPath;
+	public String rawPath;
 
 	private static InhabithatConfig instance = null;
 	private Properties properties = new Properties();
@@ -49,5 +50,6 @@ public class InhabithatConfig {
 
 		dataPath = homePath + "/data";
 		citiesPath = dataPath + "/cities";
+		rawPath = dataPath + "/raw";
 	}
 }
