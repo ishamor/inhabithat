@@ -1,4 +1,4 @@
-package inhabithat.mining;
+package inhabithat.mining.bestplaces;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;
 
@@ -19,6 +19,7 @@ public class BestplacesScrub {
 	 */
 	private static String urlBase = "http://www.bestplaces.net/";
 	private static String decRegex = "\\d+\\.?\\d*";
+	private static Long sleepTimeMS = 10000L;//10 seconds
 	public static void main(String[] args) throws Exception {
 		try {
 			//BestplacesScrub.mineClimate("california", "los_angeles");
@@ -40,6 +41,32 @@ public class BestplacesScrub {
 		}
 		//testMatch();
 
+	}
+	public static void mineAll(AbstractLocale loc){
+		String city = loc.name(NameFormat.Lower_);//This is a format enum of LocaleName
+		String state = loc.stateName(NameFormat.Lower_);
+		mineClimate(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineCost(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineCrime(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineEconomy(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineEducation(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineHealth(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineHousing(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		minePeople(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineReligion(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineTransportation(state, city,loc);
+		Thread.sleep(sleepTimeMS);
+		mineVoting(state, city,loc);
+		Thread.sleep(sleepTimeMS);
 	}
 	public static void mineVoting(String state, String city) throws Exception{
 

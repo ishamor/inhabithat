@@ -18,7 +18,7 @@ public class MiningMethods {
  */
 	public static void wikiCitiesMostPopulated() throws Exception{
 		String rpath = InhabithatConfig.getInstance().citiesPath+"/wiki_above_100K.txt";
-		String wpath = InhabithatConfig.getInstance().citiesPath+"/wiki_above_100K_fmt.txt";
+		String wpath = InhabithatConfig.getInstance().citiesPath+"/wiki_above_100K_df.txt";
 		try {
 			DataFrame df = readWikiTable(rpath);
 			//--remove rank from titles
