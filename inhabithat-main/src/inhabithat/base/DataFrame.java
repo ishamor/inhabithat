@@ -1,4 +1,6 @@
-package mining;
+package inhabithat.base;
+
+import inhabithat.utils.ListTools;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,8 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-
-import utils.ListTools;
 
 /**
  * frame holds a table. Each colums is a variable and each row a measurement.

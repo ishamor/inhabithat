@@ -1,4 +1,8 @@
-package mining;
+package inhabithat.mining;
+
+import inhabithat.base.DataFrame;
+import inhabithat.utils.InhabithatConfig;
+import inhabithat.utils.ListTools;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -6,9 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import utils.InhabithatConfig;
-import utils.ListTools;
 
 public class MiningMethods {
 /**

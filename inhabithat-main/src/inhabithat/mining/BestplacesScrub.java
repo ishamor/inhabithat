@@ -1,4 +1,7 @@
-package mining;
+package inhabithat.mining;
+import inhabithat.utils.InhabithatConfig;
+import inhabithat.utils.ListTools;
+
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,13 +9,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.*;
-
-import utils.InhabithatConfig;
-import utils.ListTools;
-//Call structure:
-//Zip: http://www.bestplaces.net/zip-code/minnesota/st._paul/55108
-//city: http://www.bestplaces.net/city/california/los_angeles
-//town: http://www.bestplaces.net/city/minnesota/falcon_heights
 
 //Subclasses: http://www.bestplaces.net/economy/city/california/los_angeles
 //overview, people, health, ecomony, housing, rankings, climate, crime, education, comments, transportation, cost_of_living, religion, voting. 

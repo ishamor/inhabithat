@@ -1,4 +1,4 @@
-package utils;
+package inhabithat.utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
