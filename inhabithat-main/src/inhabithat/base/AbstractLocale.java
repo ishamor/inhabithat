@@ -13,7 +13,7 @@ public abstract class AbstractLocale {
 	ZipCode zipCode;
 	AbstractLocale parent;
 	AbstractLocale state;
-	private LocaleCoords coords;
+	LocaleCoords coords;
 	private Map<GroupType,Map<AttrType,AbstractAttribute>> attributes;
 
 	public void addAttribute(AbstractAttribute attr){
