@@ -20,7 +20,7 @@ public class ListTools {
 	}
 	
 	/**
-	 * Convert from list of Object to list of String using the formula toString().
+	 * Convert from list of Object to list of String using the formula toString() with separator sep
 	 */
 	public static <T> List<String> listToString(List<T> list) {
 		if (list==null) return null;

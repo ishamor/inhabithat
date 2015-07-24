@@ -1,5 +1,6 @@
 package inhabithat.mining.bestplaces;
 
+import inhabithat.base.AbstractLocale;
 import inhabithat.base.DataFrame;
 import inhabithat.utils.InhabithatConfig;
 
@@ -24,7 +25,7 @@ public class BestPlacesTop {
 	}
 	private void mine() {
 		for (AbstractLocale loc : locales){
-			BestplacesScrub.mine(loc);
+			BestplacesScrub.mineAll(loc);
 		}
 		
 	}

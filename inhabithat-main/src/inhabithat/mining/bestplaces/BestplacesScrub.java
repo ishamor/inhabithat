@@ -1,4 +1,5 @@
 package inhabithat.mining.bestplaces;
+import inhabithat.base.AbstractLocale;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;
 
@@ -43,7 +44,7 @@ public class BestplacesScrub {
 
 	}
 	public static void mineAll(AbstractLocale loc){
-		String city = loc.name(NameFormat.Lower_);//This is a format enum of LocaleName
+		String city = loc.formatAs(NameFormat.Lower_);//This is a format enum of LocaleName
 		String state = loc.stateName(NameFormat.Lower_);
 		mineClimate(state, city,loc);
 		Thread.sleep(sleepTimeMS);
@@ -197,6 +198,7 @@ public class BestplacesScrub {
 		patterns.add(Pattern.compile("Elevation ft.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
 
 		minePrint("climate",state,city,patterns,attrValues,attrNames);
+		
 	}
 
 	private static void printAttr(List<String> attrNames,List<String> attrValues) {
