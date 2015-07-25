@@ -1,6 +1,6 @@
 package inhabithat.mining.bestplaces;
 
-import inhabithat.base.AbstractLocale;
+import inhabithat.base.Locale;
 import inhabithat.base.DataFrame;
 import inhabithat.utils.InhabithatConfig;
 
@@ -18,13 +18,13 @@ import java.util.Locale;
  *
  */
 public class BestPlacesTop {
-	private List<AbstractLocale> locales;
+	private List<Locale> locales;
 	public BestPlacesTop(){
 		initLocales();
 		mine();
 	}
 	private void mine() {
-		for (AbstractLocale loc : locales){
+		for (Locale loc : locales){
 			BestplacesScrub.mineAll(loc);
 		}
 		
@@ -33,7 +33,7 @@ public class BestPlacesTop {
 	 * Gather state, city info and init the list
 	 */
 	private void initLocales() {
-		locales = new ArrayList<AbstractLocale>();
+		locales = new ArrayList<Locale>();
 		String rpath = InhabithatConfig.getInstance().citiesPath+"/wiki_above_100K_df.txt";
 		DataFrame df = new DataFrame(rpath);
 		if (df.isValid()){
@@ -41,7 +41,7 @@ public class BestPlacesTop {
 				String city = df.getData(ri,"City");
 				String state = df.getData(ri,"State");
 				String coords = df.getData(ri,"Location");
-				CityLocale loc = new CityLocale(city,state,coords);
+				Locale loc = new Locale(city,state,coords);
 				locales.add(loc);
 			}
 		}

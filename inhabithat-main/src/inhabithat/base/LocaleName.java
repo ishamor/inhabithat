@@ -26,7 +26,7 @@ public class LocaleName {
 		return format(name,format);
 	}
 	
-	private static String format(String str,NameFormat format) {
+	public static String format(String str,NameFormat format) {
 		//turn to lowerCase, replace _ with space and continue from there
 		String ret = new String(str);
 		ret = ret.toLowerCase();

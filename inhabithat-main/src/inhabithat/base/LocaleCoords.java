@@ -19,11 +19,11 @@ public class LocaleCoords {
 	private static final double earthRadiusKm = 6371;
 	private static final double earthRadiusMile = earthRadiusKm*kmInMile;
 
-	public LocaleCoords (String strNorth,String strWest){
-		this.strLat = strNorth;
-		this.strLong = strWest;
-		this.latd = coord2Num(strNorth);
-		this.longd = coord2Num(strWest);
+	public LocaleCoords (String strLat,String strLong){
+		this.strLat = strLat;
+		this.strLong = strLong;
+		this.latd = coord2Num(strLat);
+		this.longd = coord2Num(strLong);
 		this.latRad = latd*Math.PI/180;
 		this.longRad = longd*Math.PI/180;
 	}

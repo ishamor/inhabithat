@@ -1,6 +1,8 @@
 package inhabithat.mining.bestplaces;
+import inhabithat.base.BasicAttribute;
 import inhabithat.base.BasicAttribute.AttrType;
-import inhabithat.base.AbstractLocale;
+import inhabithat.base.Locale;
+import inhabithat.base.LocaleName;
 import inhabithat.base.LocaleName.NameFormat;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;
@@ -45,9 +47,9 @@ public class BestplacesScrub {
 		//testMatch();
 
 	}
-	public static void mineAll(AbstractLocale loc){
+	public static void mineAll(Locale loc){
 		String city = loc.name(NameFormat.Lower_);//This is a format enum of LocaleName
-		String state = loc.state.name(NameFormat.Lower_);
+		String state = LocaleName.format(loc.state,NameFormat.Lower_);
 		mineClimate(state, city,loc);
 		//TODO go over all methods and format with AttrType etc.
 		Thread.sleep(sleepTimeMS);
@@ -183,7 +185,7 @@ public class BestplacesScrub {
 
 		minePrint("people",state,city,patterns,attrValues,attrNames);
 	}
-	public static void mineClimate(String state, String city, AbstractLocale loc) throws Exception{
+	public static void mineClimate(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
 		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.RAINFALL, AttrType.SNOWFALL, AttrType.PRECIP_DAYS, AttrType.SUN_DAYS,
@@ -231,10 +233,10 @@ public class BestplacesScrub {
 	 * after mining, attrValues and attrNames are of the same length. Enter them into locale.
 	 */
 	private static void minePrint(String pageName, String state, String city,List<Pattern> patterns, 
-			List<String> attrValues, List<AttrType> attrNames, AbstractLocale loc) throws Exception {
+			List<String> attrValues, List<AttrType> attrTypes, Locale loc) throws Exception {
 		mineWeb(urlBase+pageName+"/city/"+state+"/"+city,patterns,attrValues);
 		for (int ai=0;ai<attrValues.size();++ai){
-			//TODO create BasicAttribute and add to loc
+			BasicAttribute attr = new BasicAttribute(attrTypes.get(ai),attrValues.get(ai));
 			loc.addAttribute(attr);
 		}
 		//printAttr(attrNames,attrValues);

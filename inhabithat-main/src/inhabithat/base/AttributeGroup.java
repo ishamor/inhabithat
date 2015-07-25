@@ -3,6 +3,7 @@ package inhabithat.base;
 import inhabithat.base.BasicAttribute.AttrType;
 import inhabithat.utils.ListTools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ public class AttributeGroup {
 		DEMOGRAPHIC
 	}
 	private GroupType type;
+	private List<BasicAttribute> attributes = new ArrayList<BasicAttribute>();
+	private List<AttrType> attrTypes;
 	private Double score;
 	private Double weight;
 	private static Map<AttrType,GroupType> attr2GrpMap;
@@ -64,15 +67,40 @@ public class AttributeGroup {
 		grp2AttrMap.put(GroupType.LOCATION,ListTools.asList(AttrType.ELEVATION));
 
 	}
-	
+	public AttributeGroup(GroupType gtype){
+		this.type=gtype;
+		this.attrTypes = grp2Attr(gtype);
+	}
+/**
+ * return a list of the attribute names under this group
+ */
+
 	public static GroupType attr2Grp(AttrType attr){
 		return attr2GrpMap.get(attr);
 	}
 	public static List<AttrType> grp2Attr(GroupType grp){
 		return grp2AttrMap.get(grp);
 	}
-	public List<AttrType> attributes(){
+	public List<AttrType> attrTypes(){
 		return grp2Attr(type);
+	}
+	/**
+	 * Add an attribute to the group, at index attr.idx
+	 */
+	void addAttribute(BasicAttribute attr) {
+		attributes.add(attr.getType().idx, attr);
+
+	}
+	/**
+	 * Get empty list with a group of each type.
+	 */
+	public static  List<AttributeGroup> initGroups() {
+		 List<AttributeGroup> glist= new ArrayList<AttributeGroup>();
+		for (GroupType gtype : GroupType.values()){
+			AttributeGroup group = new AttributeGroup(gtype);
+			glist.add(gtype.ordinal(),group);
+		}
+		return glist;
 	}
 
 }
