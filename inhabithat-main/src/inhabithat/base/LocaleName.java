@@ -12,7 +12,7 @@ import java.util.List;
  *
  */
 public class LocaleName {
-	enum NameFormat {
+	public enum NameFormat {
 		Lower_,//los_angeles, boston
 		Lower,//los angeles, boston
 		Capital//Los Angeles, Boston

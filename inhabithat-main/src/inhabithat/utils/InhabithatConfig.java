@@ -10,6 +10,9 @@ public class InhabithatConfig {
 	public String dataPath;
 	public String citiesPath;
 	public String rawPath;
+	
+	//---Configurations
+	public boolean metricSystem;// true metric, false imperial
 
 	private static InhabithatConfig instance = null;
 	private Properties properties = new Properties();

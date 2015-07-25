@@ -1,6 +1,6 @@
 package inhabithat.base;
 
-import inhabithat.base.AbstractAttribute.AttrType;
+import inhabithat.base.BasicAttribute.AttrType;
 import inhabithat.utils.ListTools;
 
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AttributeGroup {
-	enum GroupType {
+	public enum GroupType {
 		CLIMATE,
 		ECOLOGY,
 		QOL,
@@ -17,8 +17,8 @@ public class AttributeGroup {
 		DEMOGRAPHIC
 	}
 	private GroupType type;
-	Double score;
-	Double weight;
+	private Double score;
+	private Double weight;
 	private static Map<AttrType,GroupType> attr2GrpMap;
 	private static Map<GroupType,List<AttrType>> grp2AttrMap;
 	static {
@@ -64,6 +64,7 @@ public class AttributeGroup {
 		grp2AttrMap.put(GroupType.LOCATION,ListTools.asList(AttrType.ELEVATION));
 
 	}
+	
 	public static GroupType attr2Grp(AttrType attr){
 		return attr2GrpMap.get(attr);
 	}

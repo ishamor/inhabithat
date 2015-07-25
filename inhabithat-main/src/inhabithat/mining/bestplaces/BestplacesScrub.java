@@ -1,5 +1,7 @@
 package inhabithat.mining.bestplaces;
+import inhabithat.base.BasicAttribute.AttrType;
 import inhabithat.base.AbstractLocale;
+import inhabithat.base.LocaleName.NameFormat;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;
 
@@ -44,9 +46,10 @@ public class BestplacesScrub {
 
 	}
 	public static void mineAll(AbstractLocale loc){
-		String city = loc.formatAs(NameFormat.Lower_);//This is a format enum of LocaleName
-		String state = loc.stateName(NameFormat.Lower_);
+		String city = loc.name(NameFormat.Lower_);//This is a format enum of LocaleName
+		String state = loc.state.name(NameFormat.Lower_);
 		mineClimate(state, city,loc);
+		//TODO go over all methods and format with AttrType etc.
 		Thread.sleep(sleepTimeMS);
 		mineCost(state, city,loc);
 		Thread.sleep(sleepTimeMS);
@@ -180,10 +183,11 @@ public class BestplacesScrub {
 
 		minePrint("people",state,city,patterns,attrValues,attrNames);
 	}
-	public static void mineClimate(String state, String city) throws Exception{
+	public static void mineClimate(String state, String city, AbstractLocale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("rainfall", "snowfall", "precipDays", "sunnyDays", "avgJulyHigh", "avgJanLow", "comfIndex", "uvIndex", "elevation"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.RAINFALL, AttrType.SNOWFALL, AttrType.PRECIP_DAYS, AttrType.SUN_DAYS,
+				AttrType.TEMP_AVG_SMR_HIGH, AttrType.TEMP_AVG_WTR_LOW, AttrType.COMFORT_IDX, AttrType.UV_IDX, AttrType.ELEVATION));
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		//--Prepare patterns for climate data
 		//Rainfall looks like this: Rainfall (in.)</a></td><td>18.1
@@ -197,7 +201,7 @@ public class BestplacesScrub {
 		patterns.add(Pattern.compile("UV Index\\S.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile("Elevation ft.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
 
-		minePrint("climate",state,city,patterns,attrValues,attrNames);
+		minePrint("climate",state,city,patterns,attrValues,attrNames,loc);
 		
 	}
 
@@ -223,9 +227,17 @@ public class BestplacesScrub {
 		}
 		in.close();
 	}
-	private static void minePrint(String pageName, String state, String city,List<Pattern> patterns, List<String> attrValues, List<String> attrNames) throws Exception {
+	/**
+	 * after mining, attrValues and attrNames are of the same length. Enter them into locale.
+	 */
+	private static void minePrint(String pageName, String state, String city,List<Pattern> patterns, 
+			List<String> attrValues, List<AttrType> attrNames, AbstractLocale loc) throws Exception {
 		mineWeb(urlBase+pageName+"/city/"+state+"/"+city,patterns,attrValues);
-		printAttr(attrNames,attrValues);
+		for (int ai=0;ai<attrValues.size();++ai){
+			//TODO create BasicAttribute and add to loc
+			loc.addAttribute(attr);
+		}
+		//printAttr(attrNames,attrValues);
 
 	}
 	private static void printPage(String url) throws Exception{

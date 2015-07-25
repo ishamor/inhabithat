@@ -1,4 +1,7 @@
 package inhabithat.base;
+
+import inhabithat.utils.InhabithatConfig;
+
 /**
  * class maintins the locale coordinates and supplies methods for manipulating them
  * Coordinates should be supplied in decimal degree form: 40.6643°N 73.9385°W
@@ -32,7 +35,7 @@ public class LocaleCoords {
 		return Double.valueOf(str);
 	}
 	/**
-	 * formula found here: http://williams.best.vwh.net/avform.htm, use great circle calculation
+	 * formula for distance betwen two coordinate points found here: http://williams.best.vwh.net/avform.htm, use great circle calculation
 	 * d = 2*asin(sqrt((sin((lat1-lat2)/2))^2+ cos(lat1)*cos(lat2)*(sin((lon1-lon2)/2))^2))
 	 */
 	public static Double dist (LocaleCoords lc1,LocaleCoords lc2){
@@ -45,7 +48,10 @@ public class LocaleCoords {
 	public static double dist(double lat1, double lat2, double lon1, double lon2){
 		double radDist = 2*Math.asin(Math.sqrt(Math.pow(Math.sin((lat1-lat2)/2),2)+ 
 				Math.cos(lat1)*Math.cos(lat2)*Math.pow(Math.sin((lon1-lon2)/2),2)));
-		return radDist*earthRadiusMile;
+		if  (InhabithatConfig.getInstance().metricSystem)
+			return radDist*earthRadiusKm;
+		else
+			return radDist*earthRadiusMile;
 	}
 	public Double dist(LocaleCoords lc){
 		return dist(this,lc);
@@ -57,6 +63,9 @@ public class LocaleCoords {
 		double lon2 = 1.287762;
 		double dist = LocaleCoords.dist(lat1, lat2, lon1, lon2);
 		System.out.println(dist);
-		
+
+	}
+	public String toString(){
+		return strLat+", "+strLong;
 	}
 }
