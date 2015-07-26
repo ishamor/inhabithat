@@ -4,13 +4,8 @@ import inhabithat.base.Locale;
 import inhabithat.base.DataFrame;
 import inhabithat.utils.InhabithatConfig;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Mine data from the http://www.bestplaces.net site
@@ -41,8 +36,10 @@ public class BestPlacesTop {
 				String city = df.getData(ri,"City");
 				String state = df.getData(ri,"State");
 				String coords = df.getData(ri,"Location");
-				Locale loc = new Locale(city,state,coords);
+				String[] lat_lon = coords.split(" ");
+				Locale loc = new Locale(city,state,lat_lon[0],lat_lon[1]);
 				locales.add(loc);
+				loc.writeFile();
 			}
 		}
 	}

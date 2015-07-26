@@ -10,9 +10,11 @@ public class InhabithatConfig {
 	public String dataPath;
 	public String citiesPath;
 	public String rawPath;
+	public String locPath;
 	
 	//---Configurations
 	public boolean metricSystem;// true metric, false imperial
+	public String localeVersion = "V1.1";;
 
 	private static InhabithatConfig instance = null;
 	private Properties properties = new Properties();
@@ -53,6 +55,7 @@ public class InhabithatConfig {
 
 		dataPath = homePath + "/data";
 		citiesPath = dataPath + "/cities";
+		locPath = dataPath + "/locales";
 		rawPath = dataPath + "/raw";
 	}
 }

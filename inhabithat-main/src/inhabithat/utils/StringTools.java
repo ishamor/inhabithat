@@ -8,4 +8,10 @@ public class StringTools {
 		ret.setCharAt(0, Character.toUpperCase(ch));
 		return ret;
 	}
+	/**
+	 * Returns a string composed of numRepeats repetitions of the char ch
+	 */
+	public static String charRepeated(int numRepeats, char ch){
+		return new String(new char[numRepeats]).replace('\0', ch);
+	}
 }

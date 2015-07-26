@@ -1,11 +1,10 @@
 package inhabithat.mining.bestplaces;
-import inhabithat.base.BasicAttribute;
-import inhabithat.base.BasicAttribute.AttrType;
+import inhabithat.base.Attribute;
+import inhabithat.base.Attribute.AttrType;
 import inhabithat.base.Locale;
 import inhabithat.base.LocaleName;
 import inhabithat.base.LocaleName.NameFormat;
 import inhabithat.utils.InhabithatConfig;
-import inhabithat.utils.ListTools;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class BestplacesScrub {
 			//BestplacesScrub.mineTransportation("california", "los_angeles");
 			//BestplacesScrub.mineCost("california", "los_angeles");
 			//BestplacesScrub.mineReligion("california", "los_angeles");
-			BestplacesScrub.mineVoting("california", "los_angeles");
+			//BestplacesScrub.mineVoting("california", "los_angeles");
 			//printPage("http://www.bestplaces.net/religion/city/california/los_angeles");
 
 		}
@@ -49,105 +48,112 @@ public class BestplacesScrub {
 	}
 	public static void mineAll(Locale loc){
 		String city = loc.name(NameFormat.Lower_);//This is a format enum of LocaleName
-		String state = LocaleName.format(loc.state,NameFormat.Lower_);
-		mineClimate(state, city,loc);
-		//TODO go over all methods and format with AttrType etc.
-		Thread.sleep(sleepTimeMS);
-		mineCost(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineCrime(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineEconomy(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineEducation(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineHealth(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineHousing(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		minePeople(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineReligion(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineTransportation(state, city,loc);
-		Thread.sleep(sleepTimeMS);
-		mineVoting(state, city,loc);
-		Thread.sleep(sleepTimeMS);
+		String state = LocaleName.format(loc.stateName(),NameFormat.Lower_);
+		try{
+			mineClimate(state, city,loc);
+			//TODO go over all methods and format with AttrType etc.
+			Thread.sleep(sleepTimeMS);
+			mineCost(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineCrime(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineEconomy(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineEducation(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineHealth(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineHousing(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			minePeople(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineReligion(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineTransportation(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+			mineVoting(state, city,loc);
+			Thread.sleep(sleepTimeMS);
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
 	}
-	public static void mineVoting(String state, String city) throws Exception{
+	public static void mineVoting(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("Democrat","Republican","Independent Other"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.VOTE_DEMOCRAT,AttrType.VOTE_REPUBLICAN,AttrType.VOTE_INDEP));
 		//		-- All numbers are percentages
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
-		for (String attr : attrNames){
+		for (AttrType attr : attrNames){
 			patterns.add(Pattern.compile(">"+attr+"<.*?>("+decRegex+")%",Pattern.CANON_EQ));
 		}
-		minePrint("voting",state,city,patterns,attrValues,attrNames);
+		minePrint("voting",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void mineReligion(String state, String city) throws Exception{
+	public static void mineReligion(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("Percent Religious","Catholic","LDS","Baptist","Episcopalian","Pentecostal","Lutheran",
-				"Methodist","Presbyterian","Other Christian","Jewish","Eastern","Islam"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.RELIGIOUS,AttrType.CATHOLIC,AttrType.LDS,AttrType.BAPTIST,AttrType.EPISCOPALIAN,
+				AttrType.PENTECOSTAL,AttrType.LUTHERAN,	AttrType.METHODIST,AttrType.PRESBYTERIAN,
+				AttrType.OTHER_CHRISTIAN,AttrType.JEWISH,AttrType.EASTERN,AttrType.ISLAM));
 		//		-- All numbers are percentages
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
-		for (String attr : attrNames){
+		for (AttrType attr : attrNames){
 			patterns.add(Pattern.compile(">"+attr+"<.*?>("+decRegex+")%",Pattern.CANON_EQ));
 		}
-		minePrint("religion",state,city,patterns,attrValues,attrNames);
+		minePrint("religion",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void mineCost(String state, String city) throws Exception{
+	public static void mineCost(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("overallCost"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.COL_OVERALL)); 
 		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Overall<.*?>("+decRegex+")<",Pattern.CANON_EQ));//100 is nation average
-		minePrint("cost_of_living",state,city,patterns,attrValues,attrNames);
+		minePrint("cost_of_living",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void mineTransportation(String state, String city) throws Exception{
+	public static void mineTransportation(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("CommuteTime"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.COMMUTE_TIME));
 		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Commute Time<.*?>("+decRegex+")<",Pattern.CANON_EQ));
-		minePrint("transportation",state,city,patterns,attrValues,attrNames);
+		minePrint("transportation",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void mineEducation(String state, String city) throws Exception{
+	public static void mineEducation(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("Pupil/Teacher"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.PUPIL_TEACHER_RATIO));
 		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Pupil/Teacher Ratio<.*?>("+decRegex+")<",Pattern.CANON_EQ));
-		minePrint("education",state,city,patterns,attrValues,attrNames);
+		minePrint("education",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void mineCrime(String state, String city) throws Exception{
+	public static void mineCrime(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("violendCrime", "propertyCrime"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.VIOLENT_CRIME,AttrType.PROPERTY_CRIME));
 		//		-- Crime is number from 1 to 100, with 1 being the lowest crime rate.
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Violent Crime<.*?>("+decRegex+")<",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile(">Property Crime<.*?>("+decRegex+")<",Pattern.CANON_EQ));
-		minePrint("crime",state,city,patterns,attrValues,attrNames);
+		minePrint("crime",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void mineHousing(String state, String city) throws Exception{
+	public static void mineHousing(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("medianCost", "propertyTaxRate"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.MEDIAN_HOME_COST, AttrType.PROPERTY_TAX));
 
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Median Home Cost<.*?>\\$(\\d{1,3}\\,?\\d{0,3}\\,?\\d{0,3})<",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile(">Property Tax Rate<.*?>\\$("+decRegex+")<",Pattern.CANON_EQ));
-		minePrint("housing",state,city,patterns,attrValues,attrNames);
+		minePrint("housing",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void mineEconomy(String state, String city) throws Exception{
+	public static void mineEconomy(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("unemployment", "salesTaxes", "incomeTaxes", "incomePerCapita"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.UNEMPLOYMENT_RATE, AttrType.SALES_TAX,
+				AttrType.INCOME_TAX,AttrType.INCOME_PER_CAPITA));
 
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		//patterns.add(Pattern.compile(">Unemployment Rate<.*?>("+decRegex+")%",Pattern.CANON_EQ));//The unemployment rate is expressed as a percentage of the available work force that is not employed
@@ -155,13 +161,13 @@ public class BestplacesScrub {
 		patterns.add(Pattern.compile(">Sales Taxes<.*?>("+decRegex+")%",Pattern.CANON_EQ));//The total of all sales taxes for an area, including state, county and local taxes
 		patterns.add(Pattern.compile(">Income Taxes<.*?>("+decRegex+")%",Pattern.CANON_EQ));//The total of all income taxes for an area, including state, county and local taxes.  Federal income taxes are not included.
 		patterns.add(Pattern.compile(">Income per Cap\\.<.*?>\\$(\\d{1,3}\\,?\\d{0,3})<",Pattern.CANON_EQ));//HealthCost 100 is national average, 110 is 10% more expansive
-		minePrint("economy",state,city,patterns,attrValues,attrNames);
+		minePrint("economy",state,city,patterns,attrValues,attrNames,loc);
 	}
 
-	public static void mineHealth(String state, String city) throws Exception{
+	public static void mineHealth(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("airQuality", "waterQuality", "DrPer100K", "HealthCostIndex"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.AIR_QLTY, AttrType.WATER_QLTY,AttrType.DR_PER_100K, AttrType.HEALTH_COST));
 
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Air Quality \\(100=best\\)<.*?>("+decRegex+")<",Pattern.CANON_EQ));
@@ -169,12 +175,13 @@ public class BestplacesScrub {
 		patterns.add(Pattern.compile(">Physicians per Cap\\.<.*?>("+decRegex+")<",Pattern.CANON_EQ));//Dr. per 100K residents
 		patterns.add(Pattern.compile(">Health Cost<.*?>("+decRegex+")<",Pattern.CANON_EQ));//HealthCost 100 is national average, 110 is 10% more expansive
 
-		minePrint("health",state,city,patterns,attrValues,attrNames);
+		minePrint("health",state,city,patterns,attrValues,attrNames,loc);
 	}
-	public static void minePeople(String state, String city) throws Exception{
+	public static void minePeople(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<String> attrNames = new ArrayList<String>(Arrays.asList("population", "populationDensity", "white", "black", "asian", "hispanic"));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.POPULATION,AttrType.POPULATION_DENSITY,
+				AttrType.WHITE, AttrType.BLACK,AttrType.ASIAN, AttrType.HISPANIC));
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Population\\<.*?>(\\d{1,2}\\,?\\d{0,3}\\,?\\d{0,3})<",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile(">Pop. Density\\<.*?>(\\d{1,3}\\,\\d{0,3})<",Pattern.CANON_EQ));//people per sq. mile
@@ -183,7 +190,7 @@ public class BestplacesScrub {
 		patterns.add(Pattern.compile("Asian<.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile(">Hispanic<.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
 
-		minePrint("people",state,city,patterns,attrValues,attrNames);
+		minePrint("people",state,city,patterns,attrValues,attrNames,loc);
 	}
 	public static void mineClimate(String state, String city, Locale loc) throws Exception{
 
@@ -204,7 +211,7 @@ public class BestplacesScrub {
 		patterns.add(Pattern.compile("Elevation ft.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
 
 		minePrint("climate",state,city,patterns,attrValues,attrNames,loc);
-		
+
 	}
 
 	private static void printAttr(List<String> attrNames,List<String> attrValues) {
@@ -230,13 +237,13 @@ public class BestplacesScrub {
 		in.close();
 	}
 	/**
-	 * after mining, attrValues and attrNames are of the same length. Enter them into locale.
+	 * after mining, attrValues and attrNames are of the same length, one holding the type and the other the value. Enter them into locale.
 	 */
 	private static void minePrint(String pageName, String state, String city,List<Pattern> patterns, 
 			List<String> attrValues, List<AttrType> attrTypes, Locale loc) throws Exception {
 		mineWeb(urlBase+pageName+"/city/"+state+"/"+city,patterns,attrValues);
 		for (int ai=0;ai<attrValues.size();++ai){
-			BasicAttribute attr = new BasicAttribute(attrTypes.get(ai),attrValues.get(ai));
+			Attribute attr = new Attribute(attrTypes.get(ai),attrValues.get(ai));
 			loc.addAttribute(attr);
 		}
 		//printAttr(attrNames,attrValues);
