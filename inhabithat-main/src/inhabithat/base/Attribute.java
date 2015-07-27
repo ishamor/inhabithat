@@ -11,6 +11,7 @@ import inhabithat.utils.StringTools;
 public class Attribute extends AbstractAttribute{
 	/**
 	 * List every attribute with a flat hierarchy of groups and subgroups. Init every one with an index in the lowest list
+	 * Indices run by the bottom-most subgroup. All free items not within a sub-group must come last int he group.
 	 * @author ishamor
 	 *
 	 */
@@ -55,9 +56,7 @@ public class Attribute extends AbstractAttribute{
 		MEDIAN_HOME_COST(4,GroupType.ECONOMY),
 		
 		//Demographics
-		POPULATION(0,GroupType.DEMOGRAPHIC),
-		POPULATION_DENSITY(1,GroupType.DEMOGRAPHIC),
-		
+			
 		WHITE(0,GroupType.DEMOGRAPHIC,GroupType.RACE),
 		BLACK(1,GroupType.DEMOGRAPHIC,GroupType.RACE),
 		ASIAN(2,GroupType.DEMOGRAPHIC,GroupType.RACE),
@@ -80,6 +79,9 @@ public class Attribute extends AbstractAttribute{
 		VOTE_DEMOCRAT(0,GroupType.DEMOGRAPHIC, GroupType.VOTING),
 		VOTE_REPUBLICAN(1,GroupType.DEMOGRAPHIC, GroupType.VOTING),
 		VOTE_INDEP(2,GroupType.DEMOGRAPHIC, GroupType.VOTING),
+		
+		POPULATION(3,GroupType.DEMOGRAPHIC),
+		POPULATION_DENSITY(4,GroupType.DEMOGRAPHIC),
 
 		//location
 		ELEVATION(0,GroupType.LOCATION);

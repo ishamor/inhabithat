@@ -21,8 +21,6 @@ public class MiningMethods {
 		String wpath = InhabithatConfig.getInstance().citiesPath+"/wiki_above_100K_df.txt";
 		try {
 			DataFrame df = readWikiTable(rpath);
-			//--remove rank from titles
-			df.getTitles().remove(0);
 			df.write(wpath);
 		}
 		catch (IOException e) {
@@ -41,28 +39,36 @@ public class MiningMethods {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fname), "UTF-8"));
 			//BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fname,true),"UTF-8"));
 			String query;
+			StringBuilder tableLine = new StringBuilder();
 			List<String> tmpRow = null;
 			int lineNum = 1;
 			while ((query = reader.readLine()) != null){
 				query = query.replaceAll("\\[\\d+\\]", "");//remove [5] link references
 				if (lineNum==1){//title line
 					String[] titles = query.split("\t");
-					ret.setTitles(ListTools.asList(titles));
+					ret.setTitles(ListTools.asList(titles).subList(1, titles.length));//--remove rank from titles
 				}
 				else {
+					//Table lines are split to 3 lines, 2,3,4   5,6,7   Conaactnate them and then do the splitting
 					//keep on parsing lines into data rows until reaching a row which starts with \d\t. This row starts a new data row.
-					String tmp = query.replaceAll("^\\d+\\t","");
-					if (tmp.equals(query)==false){
-						if (tmpRow!=null) ret.addDataRow(tmpRow);
+					if (lineNum%3==2){
+						if (tableLine.length()!=0){
+							String[] data = tableLine.toString().split("\\t");
+							ret.addDataRow(ListTools.asList(data));
+						}
+						tableLine = new StringBuilder();
+						tableLine.append(query.replaceAll("^\\d+\\t",""));
 						tmpRow = new ArrayList<String>();
-						query = tmp;
 					}
-					String[] data = query.split("\\t");
-					tmpRow.addAll(ListTools.asList(data));
+					else {
+						tableLine.append(',').append(query);
+					}
+					
 				}
 				lineNum++;
 			}
-			ret.addDataRow(tmpRow);
+			String[] data = tableLine.toString().split("\\t");
+			ret.addDataRow(ListTools.asList(data));
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();

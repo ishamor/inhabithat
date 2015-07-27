@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +28,14 @@ public class Locale {
 	public LocaleCoords coords;
 	private Double score;
 	//private Map<GroupType,Map<AttrType,BasicAttribute>> attributes = new HashMap<GroupType,Map<AttrType,BasicAttribute>>();
-	private List<AttributeGroup> groups;
+	private List<AttributeGroup> groups =new ArrayList<AttributeGroup>();
 	private String fileName;
 
 	public Locale(String city, String stateStr, String strLat, String strLong) {
 		this.state = new LocaleName(stateStr);
 		this.name = new LocaleName(city);
 		this.coords = new LocaleCoords(strLat, strLong);
-		this.groups = AttributeGroup.initGroups();
+		//this.groups = AttributeGroup.initGroups();
 		this.fileName = InhabithatConfig.getInstance().locPath+"/"+name.formatAs(NameFormat.Lower_)+" "+state.formatAs(NameFormat.Lower_)+".loc.txt";
 	}
 	public Locale(String readPath) {
@@ -45,8 +46,16 @@ public class Locale {
 		
 	}
 	public void addAttribute(Attribute attr){
-		AttributeGroup group = groups.get(attr.getType().gtypes[0].idx);
-		group.addAttribute(attr,1);
+		int groupIdx = attr.getType().gtypes[0].idx;
+		AttributeGroup group;//The top-most group to which this attribute belongs
+		if (groups.size()-1<groupIdx || groups.get(groupIdx)==null) {//this group does not yet exist - create it
+			group = new AttributeGroup(attr.getType().gtypes[0]);
+			groups.add(groupIdx, group);
+		}
+		else {
+			group = (AttributeGroup)groups.get(groupIdx);
+		}
+		group.addAttribute(attr, 1);
 	}
 	public String name(NameFormat format){
 		return name.formatAs(format);
@@ -83,7 +92,7 @@ public class Locale {
 	public static void main(String[] args){
 		//TODO check locale addAttribute, write to file and load from file;
 		Locale loc = new Locale("los angeles", "california", "46WW", "44NN");
-		double value = 1.12;
+		double value = 1.5;
 		//Load location with every attribute we have
 		for (AttrType type : AttrType.values()){
 			Attribute attr = new Attribute(type, String.valueOf(value++));
@@ -92,8 +101,8 @@ public class Locale {
 		loc.writeFile();
 
 		//Check read from file
-		Locale loc2 = new Locale(loc.fileName());
-		loc2.writeFile();
+//		Locale loc2 = new Locale(loc.fileName());
+//		loc2.writeFile();
 
 	}
 }

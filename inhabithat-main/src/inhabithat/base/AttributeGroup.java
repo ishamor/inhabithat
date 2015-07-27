@@ -32,14 +32,13 @@ public class AttributeGroup extends AbstractAttribute{
 		COST_OF_LIVING(0),
 		TAX(1),
 
-		LOCATION(4),
-
-		DEMOGRAPHIC(5),
+		DEMOGRAPHIC(4),
 		//--Sub Demographic
 		RACE(0),
 		RELIGION(1),
-		VOTING(2);
+		VOTING(2),
 
+		LOCATION(5);
 		GroupType(int index){
 			this.idx = index;
 		}
@@ -125,7 +124,7 @@ public class AttributeGroup extends AbstractAttribute{
 	 * @param subGroupDepth 1: group, 2: sub-group, 3: sub-sub-group etc.
 	 */
 	void addAttribute(Attribute attr, int subGroupDepth) {
-		if (subGroupDepth>attr.getType().subGroupDepth()){
+		if (subGroupDepth==attr.getType().subGroupDepth()){
 			//End of sub-group hierarchy - add attribute to this group
 			attributes.add(attr.getType().idx, attr);
 		}
@@ -139,22 +138,22 @@ public class AttributeGroup extends AbstractAttribute{
 			else {
 				group = (AttributeGroup)attributes.get(groupIdx);
 			}
-			group.addAttribute(attr, subGroupDepth++);
+			group.addAttribute(attr, ++subGroupDepth);
 		}
 
 	}
 	public String toString(){return type.toString();}
-	/**
-	 * Get empty list with a group of each type.
-	 */
-	public static  List<AttributeGroup> initGroups() {
-		List<AttributeGroup> glist= new ArrayList<AttributeGroup>();
-		for (GroupType gtype : GroupType.values()){
-			AttributeGroup group = new AttributeGroup(gtype);
-			glist.add(gtype.ordinal(),group);
-		}
-		return glist;
-	}
+//	/**
+//	 * Get empty list with a group of each type.
+//	 */
+//	public static  List<AttributeGroup> initGroups() {
+//		List<AttributeGroup> glist= new ArrayList<AttributeGroup>();
+//		for (GroupType gtype : GroupType.values()){
+//			AttributeGroup group = new AttributeGroup(gtype);
+//			glist.add(gtype.ordinal(),group);
+//		}
+//		return glist;
+//	}
 	@Override
 	public double calcScore() {
 		// TODO Auto-generated method stub
@@ -163,9 +162,10 @@ public class AttributeGroup extends AbstractAttribute{
 	@Override
 	public void writeFile(BufferedWriter writer, int writeDepth) throws IOException {
 		writer.write(StringTools.charRepeated(writeDepth, '\t')+type+"\n");
+		++writeDepth;
 		for (AbstractAttribute attr : attributes){
 			if (attr!=null)
-				attr.writeFile(writer,writeDepth++);
+				attr.writeFile(writer,writeDepth);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package inhabithat.base;
 
 import inhabithat.utils.ListTools;
+import inhabithat.utils.ThreadTools;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,7 +15,7 @@ import java.util.List;
 
 /**
  * frame holds a table. Each column is a variable and each row a measurement.
- * DataFrame row and column numbering starts from 1
+ * DataFrame row and column numbering starts from 0
  * @author ishamor
  *
  */
@@ -44,8 +45,7 @@ public class DataFrame {
 				else {
 					//keep on parsing lines into data rows
 					String[] data = query.split("\\t");
-					tmpRow.addAll(ListTools.asList(data));
-					addDataRow(tmpRow);
+					addDataRow(ListTools.asList(data));
 				}
 				lineNum++;
 			}
@@ -62,6 +62,11 @@ public class DataFrame {
 		return titles;
 	}
 	public void addDataRow(List<String> row){
+		if (titles==null)
+			ThreadTools.throwException("DataFrame: cannot add data row before setting titles");
+		if (titles.size()!= row.size())
+			ThreadTools.throwException("DataFrame: cannot add data row with length different that titles. data.size="+row.size()+", titles.size="+titles.size());
+			
 		data.add(row);
 	}
 	public String toString(){
@@ -148,9 +153,9 @@ public class DataFrame {
 	 */
 	public int getColNum(String colName) {
 		if (isValid()==false) return -1;
-		return titles.indexOf(colName)+1;
+		return titles.indexOf(colName);
 	}
 	private boolean validRowNum(int rowNum) {
-		return rowNum>0&&rowNum<=numRows();
+		return rowNum>=0&&rowNum<numRows();
 	}
 }

@@ -21,8 +21,9 @@ public class BestPlacesTop {
 	private void mine() {
 		for (Locale loc : locales){
 			BestplacesScrub.mineAll(loc);
+			loc.writeFile();
 		}
-		
+
 	}
 	/**
 	 * Gather state, city info and init the list
@@ -32,16 +33,17 @@ public class BestPlacesTop {
 		String rpath = InhabithatConfig.getInstance().citiesPath+"/wiki_above_100K_df.txt";
 		DataFrame df = new DataFrame(rpath);
 		if (df.isValid()){
-			for (int ri=1;ri<df.numRows();++ri){
+			for (int ri=0;ri<df.numRows();++ri){
 				String city = df.getData(ri,"City");
 				String state = df.getData(ri,"State");
 				String coords = df.getData(ri,"Location");
 				String[] lat_lon = coords.split(" ");
 				Locale loc = new Locale(city,state,lat_lon[0],lat_lon[1]);
 				locales.add(loc);
-				loc.writeFile();
 			}
 		}
 	}
-
+	public static void main(String[] args){
+		new BestPlacesTop();
+	}
 }
