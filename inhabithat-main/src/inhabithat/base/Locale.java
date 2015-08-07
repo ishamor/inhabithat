@@ -1,7 +1,6 @@
 package inhabithat.base;
 
-import inhabithat.base.Attribute.AttrType;
-import inhabithat.base.AttributeGroup.GroupType;
+import inhabithat.base.AbstractAttribute.AttrType;
 import inhabithat.base.LocaleName.NameFormat;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;
@@ -19,7 +18,7 @@ import java.util.Map;
  * @author ishamor
  *
  */
-public class Locale {
+public class Locale{
 	enum LocaleType {STATE,COUNTY,CITY,TOWN};
 	public LocaleName name;
 	public ZipCode zipCode;
@@ -28,16 +27,28 @@ public class Locale {
 	public LocaleCoords coords;
 	private Double score;
 	//private Map<GroupType,Map<AttrType,BasicAttribute>> attributes = new HashMap<GroupType,Map<AttrType,BasicAttribute>>();
-	private List<AttributeGroup> groups =new ArrayList<AttributeGroup>();
+	private AbstractAttribute[] attributes;
 	private String fileName;
 
 	public Locale(String city, String stateStr, String strLat, String strLong) {
 		this.state = new LocaleName(stateStr);
 		this.name = new LocaleName(city);
 		this.coords = new LocaleCoords(strLat, strLong);
-		//this.groups = AttributeGroup.initGroups();
 		this.fileName = InhabithatConfig.getInstance().locPath+"/"+name.formatAs(NameFormat.Lower_)+" "+state.formatAs(NameFormat.Lower_)+".loc.txt";
+		initAttributes();
 	}
+	
+	
+	
+	private void initAttributes() {
+		attributes = new AbstractAttribute[AttrType.topAttributes.length];
+		for (AttrType attr : AttrType.topAttributes){
+			attributes[attr.idx] = AttributeGroup.initAttr(attr);
+		}
+	}
+
+
+
 	public Locale(String readPath) {
 		readFile(readPath);
 	}
@@ -46,16 +57,11 @@ public class Locale {
 		
 	}
 	public void addAttribute(Attribute attr){
-		int groupIdx = attr.getType().gtypes[0].idx;
-		AttributeGroup group;//The top-most group to which this attribute belongs
-		if (groups.size()-1<groupIdx || groups.get(groupIdx)==null) {//this group does not yet exist - create it
-			group = new AttributeGroup(attr.getType().gtypes[0]);
-			groups.add(groupIdx, group);
+		if (attr.depth()==0)
+			attributes[attr.index()] = attr;
+		else{
+			((AttributeGroup)attributes[attr.path()[0].idx]).addAttribute(attr);
 		}
-		else {
-			group = (AttributeGroup)groups.get(groupIdx);
-		}
-		group.addAttribute(attr, 1);
 	}
 	public String name(NameFormat format){
 		return name.formatAs(format);
@@ -79,7 +85,7 @@ public class Locale {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName,false),"UTF-8"));//overwrite any existing file
 			writer.write(InhabithatConfig.getInstance().localeVersion+"\n");
 			writer.write(name+","+state+"\n");
-			for (AttributeGroup group : groups){
+			for (AbstractAttribute group : attributes){
 				if (group!= null)
 					group.writeFile(writer,0);
 			}
@@ -94,7 +100,7 @@ public class Locale {
 		Locale loc = new Locale("los angeles", "california", "46WW", "44NN");
 		double value = 1.5;
 		//Load location with every attribute we have
-		for (AttrType type : AttrType.values()){
+		for (AttrType type : AttrType.botAttributes){
 			Attribute attr = new Attribute(type, String.valueOf(value++));
 			loc.addAttribute(attr);
 		}

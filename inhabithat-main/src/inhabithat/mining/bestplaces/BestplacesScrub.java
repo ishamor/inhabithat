@@ -1,6 +1,6 @@
 package inhabithat.mining.bestplaces;
+import inhabithat.base.AbstractAttribute.AttrType;
 import inhabithat.base.Attribute;
-import inhabithat.base.Attribute.AttrType;
 import inhabithat.base.Locale;
 import inhabithat.base.LocaleName;
 import inhabithat.base.LocaleName.NameFormat;
@@ -37,7 +37,7 @@ public class BestplacesScrub {
 			//BestplacesScrub.mineCost("california", "los_angeles");
 			//BestplacesScrub.mineReligion("california", "los_angeles");
 			//BestplacesScrub.mineVoting("california", "los_angeles");
-			//printPage("http://www.bestplaces.net/religion/city/california/los_angeles");
+			printPage("http://www.bestplaces.net/people/city/new_york/new_york");
 
 		}
 		catch (Exception err){
@@ -185,10 +185,10 @@ public class BestplacesScrub {
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		patterns.add(Pattern.compile(">Population\\<.*?>(\\d{1,2}\\,?\\d{0,3}\\,?\\d{0,3})<",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile(">Pop. Density\\<.*?>(\\d{1,3}\\,\\d{0,3})<",Pattern.CANON_EQ));//people per sq. mile
-		patterns.add(Pattern.compile("White<.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));//percentages
-		patterns.add(Pattern.compile("Black<.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Asian<.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile(">Hispanic<.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("White<.*?(\\d+\\.?\\d*)%",Pattern.CANON_EQ));//percentages
+		patterns.add(Pattern.compile("Black<.*?(\\d+\\.?\\d*)%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Asian<.*?(\\d+\\.?\\d*)%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Hispanic<.*?(\\d+\\.?\\d*)%",Pattern.CANON_EQ));
 
 		minePrint("people",state,city,patterns,attrValues,attrNames,loc);
 	}
@@ -200,15 +200,15 @@ public class BestplacesScrub {
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
 		//--Prepare patterns for climate data
 		//Rainfall looks like this: Rainfall (in.)</a></td><td>18.1
-		patterns.add(Pattern.compile("Rainfall.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Snowfall.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Precipitation Days.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Sunny Days.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("July High.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Jan. Low.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Comfort Index \\(higher=better\\).*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("UV Index\\S.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Elevation ft.*?(\\d+\\.?\\d*)",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Rainfall.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Snowfall.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Precipitation Days.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Sunny Days.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("July High.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Jan. Low.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Comfort Index \\(higher=better\\).*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("UV Index\\S.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Elevation ft.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
 
 		minePrint("climate",state,city,patterns,attrValues,attrNames,loc);
 
