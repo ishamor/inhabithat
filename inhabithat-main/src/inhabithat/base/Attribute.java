@@ -2,8 +2,6 @@ package inhabithat.base;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import inhabithat.utils.StringTools;
 
@@ -16,8 +14,16 @@ public class Attribute extends AbstractAttribute{
 	public Attribute(AttrType type, String rawData){
 		this.type = type;
 		this.rawData = rawData;
-		//this.groupType = type.gtype;
-		data = Double.valueOf(rawData);
+		this.data = str2Double(rawData);
+		
+	}
+
+	private Double str2Double(String str) {
+		if (str==null) return  Double.NaN;
+		else {
+			str = str.replace(",","");//3,456 --> 3456
+			return  Double.valueOf(str);
+		}
 	}
 
 	public AttrType getType() {

@@ -19,8 +19,6 @@ public class BestPlacesTop {
 		mine();
 	}
 	private void mine() {
-		//TODO debug mining of new_york:
-		//http://www.bestplaces.net/climate/city/new_york/new_york
 		for (Locale loc : locales){
 			BestplacesScrub.mineAll(loc);
 			loc.writeFile();

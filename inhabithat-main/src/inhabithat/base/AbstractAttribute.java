@@ -70,9 +70,9 @@ public abstract class AbstractAttribute {
 				EASTERN(2),
 				ISLAM(2),
 			VOTING(1),
-				VOTE_DEMOCRAT(2),
-				VOTE_REPUBLICAN(2),
-				VOTE_INDEP(2),
+				DEMOCRAT(2),
+				REPUBLICAN(2),
+				INDEPENDENT(2),
 			POPULATION(1),
 			POPULATION_DENSITY(1),
 			

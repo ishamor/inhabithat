@@ -75,7 +75,7 @@ public class AttributeGroup extends AbstractAttribute{
 			return attr;
 		}
 		else {
-			Attribute attr = new Attribute(atype,"0");
+			Attribute attr = new Attribute(atype,null);
 			return attr;
 		}
 	}

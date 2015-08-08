@@ -51,7 +51,6 @@ public class BestplacesScrub {
 		String state = LocaleName.format(loc.stateName(),NameFormat.Lower_);
 		try{
 			mineClimate(state, city,loc);
-			//TODO go over all methods and format with AttrType etc.
 			Thread.sleep(sleepTimeMS);
 			mineCost(state, city,loc);
 			Thread.sleep(sleepTimeMS);
@@ -81,12 +80,13 @@ public class BestplacesScrub {
 	public static void mineVoting(String state, String city, Locale loc) throws Exception{
 
 		List<Pattern> patterns = new ArrayList<Pattern>();
-		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.VOTE_DEMOCRAT,AttrType.VOTE_REPUBLICAN,AttrType.VOTE_INDEP));
+		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.DEMOCRAT,AttrType.REPUBLICAN,AttrType.INDEPENDENT));
 		//		-- All numbers are percentages
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
-		for (AttrType attr : attrNames){
-			patterns.add(Pattern.compile(">"+attr+"<.*?>("+decRegex+")%",Pattern.CANON_EQ));
-		}
+		patterns.add(Pattern.compile(">Democrat<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Republican<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Independent Other<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		
 		minePrint("voting",state,city,patterns,attrValues,attrNames,loc);
 	}
 	public static void mineReligion(String state, String city, Locale loc) throws Exception{
@@ -97,9 +97,20 @@ public class BestplacesScrub {
 				AttrType.OTHER_CHRISTIAN,AttrType.JEWISH,AttrType.EASTERN,AttrType.ISLAM));
 		//		-- All numbers are percentages
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
-		for (AttrType attr : attrNames){
-			patterns.add(Pattern.compile(">"+attr+"<.*?>("+decRegex+")%",Pattern.CANON_EQ));
-		}
+		patterns.add(Pattern.compile(">Percent Religious<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Catholic<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">LDS<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Baptist<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Episcopalian<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Pentecostal<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Lutheran<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Methodist<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Presbyterian<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Other Christian<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Jewish<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Eastern<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Islam<.*?>("+decRegex+")%",Pattern.CANON_EQ));
+		
 		minePrint("religion",state,city,patterns,attrValues,attrNames,loc);
 	}
 	public static void mineCost(String state, String city, Locale loc) throws Exception{
@@ -241,6 +252,7 @@ public class BestplacesScrub {
 	 */
 	private static void minePrint(String pageName, String state, String city,List<Pattern> patterns, 
 			List<String> attrValues, List<AttrType> attrTypes, Locale loc) throws Exception {
+		System.out.println("Mining "+pageName+" for "+city+", "+state);
 		mineWeb(urlBase+pageName+"/city/"+state+"/"+city,patterns,attrValues);
 		for (int ai=0;ai<attrValues.size();++ai){
 			Attribute attr = new Attribute(attrTypes.get(ai),attrValues.get(ai));

@@ -96,6 +96,7 @@ public class Locale{
 	}
 	public String fileName(){ return fileName;}
 	public static void main(String[] args){
+		
 		//TODO check locale addAttribute, write to file and load from file;
 		Locale loc = new Locale("los angeles", "california", "46WW", "44NN");
 		double value = 1.5;
