@@ -5,9 +5,12 @@ import inhabithat.base.LocaleName.NameFormat;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,12 +37,12 @@ public class Locale{
 		this.state = new LocaleName(stateStr);
 		this.name = new LocaleName(city);
 		this.coords = new LocaleCoords(strLat, strLong);
-		this.fileName = InhabithatConfig.getInstance().locPath+"/"+name.formatAs(NameFormat.Lower_)+" "+state.formatAs(NameFormat.Lower_)+".loc.txt";
+		this.fileName = locFileName(name.formatAs(NameFormat.Lower_), state.formatAs(NameFormat.Lower_));
 		initAttributes();
 	}
-	
-	
-	
+
+
+
 	private void initAttributes() {
 		attributes = new AbstractAttribute[AttrType.topAttributes.length];
 		for (AttrType attr : AttrType.topAttributes){
@@ -48,13 +51,16 @@ public class Locale{
 	}
 
 
-
+	public void setState(String newState){
+		this.state = new LocaleName(newState);
+		this.fileName = locFileName(name.formatAs(NameFormat.Lower_), state.formatAs(NameFormat.Lower_));
+	}
 	public Locale(String readPath) {
 		readFile(readPath);
 	}
 	private void readFile(String readPath) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	public void addAttribute(Attribute attr){
 		if (attr.depth()==0)
@@ -84,21 +90,61 @@ public class Locale{
 		try {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName,false),"UTF-8"));//overwrite any existing file
 			writer.write(InhabithatConfig.getInstance().localeVersion+"\n");
-			writer.write(name+","+state+"\n");
-			for (AbstractAttribute group : attributes){
-				if (group!= null)
-					group.writeFile(writer,0);
+			writer.write(name+"\t"+state+"\n");
+			writer.write(zipCode+"\n");
+			writer.write(coords+"\n");
+			for (AbstractAttribute attr : attributes){
+				if (attr!= null)
+					attr.writeFile(writer,0);
 			}
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	public static Locale readFile(String town, String state){
+		String rpath = locFileName(town,state);
+		Locale loc = null;
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(rpath), "UTF-8"));
+			//---Read meta info to init Locale
+			String version = reader.readLine();
+			String allName = reader.readLine();
+			String[] town_state = allName.split("\t");
+			String zip = reader.readLine();
+			String allCoords = reader.readLine();
+			String[] coords = allCoords.split("\t");
+			loc = new Locale(town_state[0],town_state[1],coords[0],coords[1]);
+			//--Read in all attributes and values
+			String query;
+			while ((query = reader.readLine()) != null){
+				//--remove leading spaces and tabs
+				query = query.trim();
+				//--split by \t and if there are tow parts, init an attribute
+				String[] parts = query.split("\t");
+				if (parts.length==2){
+					AttrType type = AttrType.valueOf(parts[0]);
+					Attribute attr = new Attribute(type,parts[1]);
+					loc.addAttribute(attr);
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return loc;
+	}
+	public static String locFileName(String town, String state) {
+		return InhabithatConfig.getInstance().locPath+"/"+LocaleName.format(town,NameFormat.Lower_)+" "+LocaleName.format(state,NameFormat.Lower_)+".loc.txt";
+	}
+
+
+
 	public String fileName(){ return fileName;}
 	public static void main(String[] args){
-		
+
 		//TODO check locale addAttribute, write to file and load from file;
-		Locale loc = new Locale("los angeles", "california", "46WW", "44NN");
+		Locale loc = new Locale("eylon", "israel", "46WW", "44NN");
 		double value = 1.5;
 		//Load location with every attribute we have
 		for (AttrType type : AttrType.botAttributes){
@@ -108,8 +154,9 @@ public class Locale{
 		loc.writeFile();
 
 		//Check read from file
-//		Locale loc2 = new Locale(loc.fileName());
-//		loc2.writeFile();
+		Locale loc2 = Locale.readFile("eylon", "israel");
+		loc2.setState("lebanon");
+		loc2.writeFile();
 
 	}
 }

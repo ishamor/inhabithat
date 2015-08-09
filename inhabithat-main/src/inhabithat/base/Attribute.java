@@ -19,10 +19,16 @@ public class Attribute extends AbstractAttribute{
 	}
 
 	private Double str2Double(String str) {
-		if (str==null) return  Double.NaN;
+		if (str==null || str.equals("null")) return  Double.NaN;
 		else {
+			try{
 			str = str.replace(",","");//3,456 --> 3456
 			return  Double.valueOf(str);
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				return Double.NaN;
+			}
 		}
 	}
 

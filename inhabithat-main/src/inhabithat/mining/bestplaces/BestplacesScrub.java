@@ -23,7 +23,7 @@ public class BestplacesScrub {
 	 */
 	private static String urlBase = "http://www.bestplaces.net/";
 	private static String decRegex = "\\d+\\.?\\d*";
-	private static Long sleepTimeMS = 10000L;//10 seconds
+	private static Long sleepTimeMS = 15000L;//20 seconds
 	public static void main(String[] args) throws Exception {
 		try {
 			//BestplacesScrub.mineClimate("california", "los_angeles");
@@ -50,6 +50,7 @@ public class BestplacesScrub {
 		String city = loc.name(NameFormat.Lower_);//This is a format enum of LocaleName
 		String state = LocaleName.format(loc.stateName(),NameFormat.Lower_);
 		try{
+			System.out.println();
 			mineClimate(state, city,loc);
 			Thread.sleep(sleepTimeMS);
 			mineCost(state, city,loc);

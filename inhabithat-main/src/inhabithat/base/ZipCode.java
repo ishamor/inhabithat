@@ -27,5 +27,8 @@ public class ZipCode {
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
+	public String toString(){
+		return zipCode;
+	}
 
 }

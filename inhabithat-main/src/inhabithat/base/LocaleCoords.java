@@ -66,6 +66,6 @@ public class LocaleCoords {
 
 	}
 	public String toString(){
-		return strLat+", "+strLong;
+		return strLat+"\t"+strLong;
 	}
 }
