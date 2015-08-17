@@ -19,7 +19,8 @@ public class BestPlacesTop {
 		mine();
 	}
 	private void mine() {
-		for (Locale loc : locales){
+		for (int li=216;li<locales.size();++li){
+			Locale loc = locales.get(li);
 			BestplacesScrub.mineAll(loc);
 			loc.writeFile();
 		}

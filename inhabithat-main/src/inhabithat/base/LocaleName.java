@@ -21,7 +21,13 @@ public class LocaleName {
 	public LocaleName(String name){
 		this.name = format(new String(name),NameFormat.Capital);
 	}
-	
+	/**
+	 * Copy constructor
+	 */
+	public LocaleName(LocaleName copyMe) {
+		this(copyMe.name);
+	}
+
 	public String formatAs(NameFormat format){
 		return format(name,format);
 	}

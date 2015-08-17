@@ -1,12 +1,11 @@
 package inhabithat.base;
 
-import inhabithat.base.AbstractAttribute.AttrType;
 import inhabithat.utils.StringTools;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class AttributeGroup extends AbstractAttribute{
 	/**
@@ -36,17 +35,6 @@ public class AttributeGroup extends AbstractAttribute{
 		
 	}
 	public String toString(){return type.toString();}
-//	/**
-//	 * Get empty list with a group of each type.
-//	 */
-//	public static  List<AttributeGroup> initGroups() {
-//		List<AttributeGroup> glist= new ArrayList<AttributeGroup>();
-//		for (GroupType gtype : GroupType.values()){
-//			AttributeGroup group = new AttributeGroup(gtype);
-//			glist.add(gtype.ordinal(),group);
-//		}
-//		return glist;
-//	}
 	@Override
 	public double calcScore() {
 		// TODO Auto-generated method stub
@@ -62,7 +50,7 @@ public class AttributeGroup extends AbstractAttribute{
 		}
 	}
 /**
- * Create an array of empty groups with the group types of the top level groups. Decend down and create the rest of the hierarchy with empty arrays in all levels.
+ * Create an array of empty groups with the group types of the top level groups. Descend down and create the rest of the hierarchy with empty arrays in all levels.
  * @return
  */
 	protected static AbstractAttribute initAttr(AttrType atype){
@@ -79,5 +67,13 @@ public class AttributeGroup extends AbstractAttribute{
 			return attr;
 		}
 	}
-
+	public AttributeGroup copy() {
+		AttributeGroup attr = (AttributeGroup) super.copy();
+		if (attr!=null){
+			attr.attributes = new AbstractAttribute[attributes.length];
+			for (int i=0;i<attributes.length;++i) 
+				attr.attributes[i] = attributes[i].copy();
+		}
+		return attr;
+	}
 }

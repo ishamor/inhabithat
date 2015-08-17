@@ -58,5 +58,14 @@ public class Attribute extends AbstractAttribute{
 	public AttrType[] path() {
 		return type.path;
 	}
+	public Attribute copyElement() {
+		Attribute attr = (Attribute) super.copy();
+
+		if (attr != null){
+			attr.rawData = new String(rawData);
+			attr.data = new Double(data);
+		}
+		return attr;
+	}
 
 }

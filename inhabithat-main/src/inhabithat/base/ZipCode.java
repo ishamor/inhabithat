@@ -13,6 +13,10 @@ public class ZipCode {
 		this.setZipCode(zip);
 	}
 	
+	public ZipCode(ZipCode copyMe) {
+		this(copyMe.zipCode);
+	}
+
 	public static List<ZipCode> locale2Zip(Locale loc){
 		return null;
 	}

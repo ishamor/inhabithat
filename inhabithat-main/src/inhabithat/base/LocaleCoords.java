@@ -3,7 +3,7 @@ package inhabithat.base;
 import inhabithat.utils.InhabithatConfig;
 
 /**
- * class maintins the locale coordinates and supplies methods for manipulating them
+ * class maintains the locale coordinates and supplies methods for manipulating them
  * Coordinates should be supplied in decimal degree form: 40.6643°N 73.9385°W
  * @author ishamor
  *
@@ -26,6 +26,9 @@ public class LocaleCoords {
 		this.longd = coord2Num(strLong);
 		this.latRad = latd*Math.PI/180;
 		this.longRad = longd*Math.PI/180;
+	}
+	public LocaleCoords(LocaleCoords copyMe) {
+		this(copyMe.strLat,copyMe.strLong);
 	}
 	/**
 	 * Converts from 40.6643°N  to 40.6643
