@@ -3,97 +3,113 @@ package inhabithat.base;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import compare.filter.AttributeFilter;
 
 
 public abstract class AbstractAttribute {
 	protected Double score;
 	protected Double weight;
-	protected AttrType type;
+	public AttrType type;
 	public enum AttrType {
 		CLIMATE(0),
-			TEMPERATURES(1),
-				TEMP_AVG_SMR_HIGH(2),
-				TEMP_AVG_SMR_LOW(2),
-				TEMP_AVG_WTR_HIGH(2),
-				TEMP_AVG_WTR_LOW(2),
-			PRECIPITATION(1),
-				SNOWFALL(2),
-				RAINFALL(2),
-				PRECIP_DAYS(2),
-			SUNSTATS(1),
-				SUN_DAYS(2),
-				UV_IDX(2),
-			COMFORT_IDX(1),
+		TEMPERATURES(1),
+		TEMP_AVG_SMR_HIGH(2),
+		TEMP_AVG_SMR_LOW(2),
+		TEMP_AVG_WTR_HIGH(2),
+		TEMP_AVG_WTR_LOW(2),
+		PRECIPITATION(1),
+		SNOWFALL(2),
+		RAINFALL(2),
+		PRECIP_DAYS(2),
+		SUNSTATS(1),
+		SUN_DAYS(2),
+		UV_IDX(2),
+		COMFORT_IDX(1),
 
 		ECOLOGY(0),
-			AIR_QLTY(1),
-			WATER_QLTY(1),
+		AIR_QLTY(1),
+		WATER_QLTY(1),
 		QOL(0),
-			CRIME(1),
-				VIOLENT_CRIME(2),
-				PROPERTY_CRIME(2),
-			PUPIL_TEACHER_RATIO(1),
-			COMMUTE_TIME(1),
-			DR_PER_100K(1),
+		CRIME(1),
+		VIOLENT_CRIME(2),
+		PROPERTY_CRIME(2),
+		PUPIL_TEACHER_RATIO(1),
+		COMMUTE_TIME(1),
+		DR_PER_100K(1),
 
 		ECONOMY(0),
-			COST_OF_LIVING(1),
-				COL_OVERALL(2),
-				HEALTH_COST(2),
-			TAX(1),
-				INCOME_TAX(2),
-				SALES_TAX(2),
-				PROPERTY_TAX(2),
-			UNEMPLOYMENT_RATE(1),
-			INCOME_PER_CAPITA(1),
-			MEDIAN_HOME_COST(1),
-		
-		
+		COST_OF_LIVING(1),
+		COL_OVERALL(2),
+		HEALTH_COST(2),
+		TAX(1),
+		INCOME_TAX(2),
+		SALES_TAX(2),
+		PROPERTY_TAX(2),
+		UNEMPLOYMENT_RATE(1),
+		INCOME_PER_CAPITA(1),
+		MEDIAN_HOME_COST(1),
+
+
 		DEMOGRAPHIC(0),
-			RACE(1),
-				WHITE(2),
-				BLACK(2),
-				ASIAN(2),
-				HISPANIC(2),
-			RELIGION(1),
-				RELIGIOUS(2),
-				CATHOLIC(2),
-				LDS(2),
-				BAPTIST(2),
-				EPISCOPALIAN(2),
-				PENTECOSTAL(2),
-				LUTHERAN(2),
-				METHODIST(2),
-				PRESBYTERIAN(2),
-				OTHER_CHRISTIAN(2),
-				JEWISH(2),
-				EASTERN(2),
-				ISLAM(2),
-			VOTING(1),
-				DEMOCRAT(2),
-				REPUBLICAN(2),
-				INDEPENDENT(2),
-			POPULATION(1),
-			POPULATION_DENSITY(1),
-			
+		RACE(1),
+		WHITE(2),
+		BLACK(2),
+		ASIAN(2),
+		HISPANIC(2),
+		RELIGION(1),
+		RELIGIOUS(2),
+		CATHOLIC(2),
+		LDS(2),
+		BAPTIST(2),
+		EPISCOPALIAN(2),
+		PENTECOSTAL(2),
+		LUTHERAN(2),
+		METHODIST(2),
+		PRESBYTERIAN(2),
+		OTHER_CHRISTIAN(2),
+		JEWISH(2),
+		EASTERN(2),
+		ISLAM(2),
+		VOTING(1),
+		DEMOCRAT(2),
+		REPUBLICAN(2),
+		INDEPENDENT(2),
+		POPULATION(1),
+		POPULATION_DENSITY(1),
+
 		LOCATION(0),
-			ELEVATION(1),
-			BY_LAKE(1),
-			BY_OCEAN(1);
-		
+		ELEVATION(1),
+		BY_LAKE(1),
+		BY_OCEAN(1);
+
 		AttrType(int depth){
 			this.depth = depth;
+			if (Arrays.asList(staticScoreAttributes).contains(this))
+				scoreType = ScoreCalcType.STATIC;
+			else
+				scoreType = ScoreCalcType.COMPARATIVE;
+			if (Arrays.asList(biggerIsBetterAttributes).contains(this))
+				biggerIsBetter = true;
+			else
+				biggerIsBetter = false;
+			
 		}
+
 		public int depth; //used for indexing attribute lists within groups
 		public int idx;//index to array of attributes at it's level
 		public AttrType[] path;//path from root to this attribute
 		public AttrType[] children;//if attribute if a group, these are the childern, else empty.
 		public static int len = AttrType.values().length;
+		public ScoreCalcType scoreType;
+		public boolean biggerIsBetter;
+
 		public boolean isGroup(){
 			return children!= null;
 		}
-		
+
 		public static List<AttrType> botAttributes = new ArrayList<AttrType>();
 		public static AttrType[] topAttributes = parseArrtibutes(new ArrayList<AttrType>(),0);
 		private static int attri = 0;//running index for this method
@@ -133,6 +149,14 @@ public abstract class AbstractAttribute {
 			return children.toArray(new AttrType[children.size()]);
 		}
 	};
+	public static AttrType[] staticScoreAttributes = {AttrType.COMFORT_IDX,AttrType.HEALTH_COST,AttrType.PROPERTY_CRIME,AttrType.VIOLENT_CRIME,
+		AttrType.PUPIL_TEACHER_RATIO,AttrType.COMMUTE_TIME,AttrType.DR_PER_100K,AttrType.WATER_QLTY,AttrType.AIR_QLTY,AttrType.INCOME_TAX,
+		AttrType.SALES_TAX,AttrType.UNEMPLOYMENT_RATE};
+	public static AttrType[] biggerIsBetterAttributes = {AttrType.COMFORT_IDX,AttrType.PUPIL_TEACHER_RATIO,AttrType.DR_PER_100K,AttrType.WATER_QLTY,AttrType.AIR_QLTY};
+
+	//--Set filtering info for all attributes.
+	public enum ScoreCalcType {STATIC,COMPARATIVE};
+
 	public int depth(){
 		return type.depth;
 	}
@@ -140,10 +164,10 @@ public abstract class AbstractAttribute {
 	public int index() {
 		return type.idx;
 	}
-	
+
 	abstract public double calcScore();
 	abstract public void writeFile(BufferedWriter writer, int writeDepth)  throws IOException;
-
+	abstract public void filter(AttributeFilter filter);
 	public Double getScore() {
 		return score;
 	}
@@ -175,5 +199,5 @@ public abstract class AbstractAttribute {
 			return null;
 		}
 	}
-	
+
 }

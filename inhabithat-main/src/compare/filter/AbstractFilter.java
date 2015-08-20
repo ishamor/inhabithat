@@ -1,8 +1,14 @@
 package compare.filter;
 
-public class Filter {
-enum FilterType {LOCALE_STATE,ATTRIBUTE};
-public FilterType type;
+public abstract class AbstractFilter {
+
+	public static final Double MAX_WEIGHT = 100.0;
+	public static final Double MIN_WEIGHT = 0.0;
+	public static final Double MAX_SCORE = 1000.0;
+	public static final Double MIN_SCORE = 0.0;
+	
+	
+	
 //TODO change this to AbstractFilter. Crate two children - LOCFilter and ATTRFilter.
 //For attrFilter create types, currently only upper-lower threshold
 //Filter has method filter(Attribute attr) which according to filtering type of the attr and data computes the score.

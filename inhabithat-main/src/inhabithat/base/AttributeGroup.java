@@ -6,6 +6,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import compare.filter.AbstractFilter;
+import compare.filter.AttributeFilter;
+
 
 public class AttributeGroup extends AbstractAttribute{
 	/**
@@ -18,6 +21,7 @@ public class AttributeGroup extends AbstractAttribute{
 
 	public AttributeGroup(AttrType gtype){
 		this.type=gtype;
+		weight = AbstractFilter.MAX_WEIGHT;
 		//this.attrTypes = grp2Attr(gtype);
 	}
 	
@@ -75,5 +79,21 @@ public class AttributeGroup extends AbstractAttribute{
 				attr.attributes[i] = attributes[i].copy();
 		}
 		return attr;
+	}
+
+
+	@Override
+	/**
+	 * For a group, a filter may set a weight. If filter is meant for this group - set new weight, if not, pass to destination attribute
+	 */
+	public void filter(AttributeFilter filter) {
+		if (type==filter.attrType){
+			weight = filter.weight;
+		}
+		else{
+			int arrayIndx = filter.attrType.path[type.depth].idx;
+			attributes[arrayIndx].filter(filter);
+		}
+		
 	}
 }

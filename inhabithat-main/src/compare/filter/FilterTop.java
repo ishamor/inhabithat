@@ -16,12 +16,12 @@ public class FilterTop {
 	private static void loadLocales() {
 		// TODO at startup go to up to date database and load static list of all known locales. Use path and loc.readFile() for this.
 	}
-	public List<Locale> filter(List<Filter> filters){
+	public List<Locale> filter(List<AbstractFilter> filters){
 		//Make copy of base list
 		List<Locale> ret = new ArrayList<Locale>();
 		for (Locale statLoc : allLocales){
 			Locale loc = statLoc.copy();
-			for (Filter filter : filters){
+			for (AbstractFilter filter : filters){
 				//pass all filters to all locales
 				loc.filter(filter);
 			}

@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import compare.filter.AbstractFilter;
+import compare.filter.AttributeFilter;
+import compare.filter.LocaleFilter;
 /**
  * A locale holds several groups -each group with its own attributes.
  * @author ishamor
@@ -28,8 +32,8 @@ public class Locale implements Comparable<Locale>{
 	public Locale parent;
 	public LocaleName state;
 	public LocaleCoords coords;
-	private Double score;
-	//private Map<GroupType,Map<AttrType,BasicAttribute>> attributes = new HashMap<GroupType,Map<AttrType,BasicAttribute>>();
+	private Double score = Double.NaN;
+	private Double fit = Double.NaN;
 	private AbstractAttribute[] attributes;
 	private String fileName;
 
@@ -184,6 +188,21 @@ public class Locale implements Comparable<Locale>{
 		catch(Exception e){
 			return null;
 		}
+	}
+
+
+
+	public void filter(AbstractFilter abstf) {
+		if (abstf instanceof LocaleFilter){
+			LocaleFilter lf = (LocaleFilter)abstf;
+			fit = lf.getFit(this);
+		}
+		else {
+			AttributeFilter af = (AttributeFilter)abstf;
+			int arrayInd = af.attrType.path[0].idx;//This filter belongs to an attribute found in this index of the locale attribute array
+			attributes[arrayInd].filter(af);
+		}
+		
 	}
 
 }
