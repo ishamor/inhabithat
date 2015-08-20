@@ -6,6 +6,7 @@ public abstract class AbstractFilter {
 	public static final Double MIN_WEIGHT = 0.0;
 	public static final Double MAX_SCORE = 1000.0;
 	public static final Double MIN_SCORE = 0.0;
+	public static final Double SCORE_RANGE = MAX_SCORE-MIN_SCORE;
 	
 	
 	

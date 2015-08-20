@@ -1,6 +1,7 @@
 package compare.filter;
 
-import inhabithat.base.AbstractAttribute.AttrType;
+import inhabithat.base.AttributeDB;
+import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.base.Attribute;
 
 
@@ -20,11 +21,18 @@ public class AttributeFilter extends AbstractFilter {
 	}
 
 	public static Double getStaticScore(Attribute attribute) {
-		// TODO According to data, biggetIsBetter and maybe other normalization thresholds - calculate a score for each attribute.
-		//Have the score spread out all the attribute values between min and max scores. 
-		//We need for each of the static attributes the min-max of the attribute. Get this and set it in a field in the enum. Then use it to 
-		//normalize
-		return null;
+		//Score is normalized by attribute min-max thresholds into the common score.
+		double range;
+		double min = AttributeDB.minValue(attribute.type);
+		double max = AttributeDB.maxValue(attribute.type);
+		if (AttributeDB.biggerIsBetter(attribute.type))
+			range = attribute.data-min;
+		else
+			range = max-attribute.data;
+		
+		Double score = (range/(max-min))*AbstractFilter.SCORE_RANGE;
+		
+		return score;
 	}
 
 

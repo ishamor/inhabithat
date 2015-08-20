@@ -1,6 +1,6 @@
 package inhabithat.base;
 
-import inhabithat.base.AbstractAttribute.AttrType;
+import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.base.LocaleName.NameFormat;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;

@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import compare.filter.AbstractFilter;
 import compare.filter.AttributeFilter;
+import inhabithat.base.AttributeDB.AttrType;
+import inhabithat.base.AttributeDB.ScoreCalcType;
 import inhabithat.utils.StringTools;
 import inhabithat.utils.ThreadTools;
 
@@ -18,7 +20,7 @@ public class Attribute extends AbstractAttribute{
 		this.type = type;
 		this.rawData = rawData;
 		this.data = str2Double(rawData);
-		if (type.scoreType==ScoreCalcType.STATIC){
+		if (AttributeDB.scoreType(type)==ScoreCalcType.STATIC){
 			weight = AbstractFilter.MAX_WEIGHT;
 			score = AttributeFilter.getStaticScore(this);
 		}

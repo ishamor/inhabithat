@@ -1,5 +1,6 @@
 package inhabithat.base;
 
+import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.utils.StringTools;
 
 import java.io.BufferedWriter;
