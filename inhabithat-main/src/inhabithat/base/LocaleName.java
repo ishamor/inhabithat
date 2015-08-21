@@ -56,6 +56,12 @@ public class LocaleName {
 		return name;
 	}
 	
+	public boolean equals(Object other){
+		if (other==null) return false;
+		if (other instanceof LocaleName == false) return false;
+		LocaleName lname = (LocaleName)other;
+		return lname.toString().equals(this.toString());
+	}
 	public static void main(String[] args){
 		List<String> regression = new ArrayList<String>();
 		regression.add("new_york");

@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import compare.filter.AbstractFilter;
 
 /**
  * frame holds a table. Each column is a variable and each row a measurement.
@@ -104,6 +107,47 @@ public class DataFrame {
 		}
 		return true;
 	}
+	public boolean writeMinMax(String fname,boolean append) throws Exception{
+		if (isLegalWriteFile(fname)==false) return false;
+		fname = makeDFFile(fname);
+		try {
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fname,append),"UTF-8"));
+			writer.write(ListTools.concat(titles,"\t"));
+			writer.write("\n");
+			Double[] mins = new Double[numCols()];
+			Double[] maxs = new Double[numCols()];
+			Arrays.fill(mins,AbstractFilter.MAX_SCORE+1);
+			Arrays.fill(maxs,AbstractFilter.MIN_SCORE-1);
+			
+			for (List<String> row : data){
+				for (int vi=0;vi<row.size();++vi){
+					String value = row.get(vi);
+					try{
+						//Try and convert to double. If successful compare and keep value if extreme
+						double vald = Double.valueOf(value);
+						if (vald<mins[vi])
+							mins[vi] = vald;
+						if (vald>maxs[vi])
+							maxs[vi] = vald;
+					}
+					catch(Exception e){
+						
+					}
+				}
+			}
+			List<String> minStrings = ListTools.listToString(Arrays.asList(mins));
+			List<String> maxStrings = ListTools.listToString(Arrays.asList(maxs));
+			writer.write(ListTools.concat(minStrings,"\t"));
+			writer.write("\n");
+			writer.write(ListTools.concat(maxStrings,"\t"));
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+		
+	}
 	/**
 	 * Data frame only reads and write to files of type *_df.txt
 	 */
@@ -158,4 +202,5 @@ public class DataFrame {
 	private boolean validRowNum(int rowNum) {
 		return rowNum>=0&&rowNum<numRows();
 	}
+	
 }

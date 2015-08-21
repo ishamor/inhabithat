@@ -1,11 +1,13 @@
 package inhabithat.base;
 
 import inhabithat.base.AttributeDB.AttrType;
+import inhabithat.utils.Pair;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import compare.filter.AttributeFilter;
@@ -24,7 +26,7 @@ public abstract class AbstractAttribute {
 		return type.idx;
 	}
 
-	abstract public double calcScore();
+	abstract public List<Pair<Double,Double>> getScores();
 	abstract public void writeFile(BufferedWriter writer, int writeDepth)  throws IOException;
 	abstract public void filter(AttributeFilter filter);
 	public Double getScore() {

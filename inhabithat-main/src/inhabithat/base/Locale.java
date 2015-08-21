@@ -4,6 +4,7 @@ import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.base.LocaleName.NameFormat;
 import inhabithat.utils.InhabithatConfig;
 import inhabithat.utils.ListTools;
+import inhabithat.utils.Pair;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -62,15 +63,19 @@ public class Locale implements Comparable<Locale>{
 	public Locale(String readPath) {
 		readFile(readPath);
 	}
-	private void readFile(String readPath) {
-		// TODO Auto-generated method stub
-
-	}
+	
 	public void addAttribute(Attribute attr){
 		if (attr.depth()==0)
 			attributes[attr.index()] = attr;
 		else{
 			((AttributeGroup)attributes[attr.path()[0].idx]).addAttribute(attr);
+		}
+	}
+	public double getAttributeData(AttrType attr){
+		if (attr.depth==0)
+			return ((Attribute)attributes[attr.idx]).data;
+		else{
+			return ((AttributeGroup)attributes[attr.path[0].idx]).getAttributeData(attr);
 		}
 	}
 	public String name(NameFormat format){
@@ -107,7 +112,10 @@ public class Locale implements Comparable<Locale>{
 		}
 	}
 	public static Locale readFile(String town, String state){
-		String rpath = locFileName(town,state);
+		return readFile(locFileName(town,state));
+	}
+	public static Locale readFile(String rpath){
+		//String rpath = locFileName(town,state);
 		Locale loc = null;
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(rpath), "UTF-8"));
@@ -139,7 +147,10 @@ public class Locale implements Comparable<Locale>{
 		return loc;
 	}
 	public static String locFileName(String town, String state) {
-		return InhabithatConfig.getInstance().locPath+"/"+LocaleName.format(town,NameFormat.Lower_)+" "+LocaleName.format(state,NameFormat.Lower_)+".loc.txt";
+		return locFileName(town,state,InhabithatConfig.getInstance().locPath);//default locale folder path
+	}
+	public static String locFileName(String town, String state,String locPath) {
+		return locPath+"/"+LocaleName.format(town,NameFormat.Lower_)+" "+LocaleName.format(state,NameFormat.Lower_)+".loc.txt";
 	}
 
 
@@ -170,20 +181,20 @@ public class Locale implements Comparable<Locale>{
 	}
 	public Locale copy() {
 		try{
-		Locale loc = (Locale) super.clone();
-		if (loc!=null){
-			loc.name = new LocaleName(name);
-			loc.zipCode = zipCode==null?null:new ZipCode(zipCode);
-			loc.parent = parent==null?null:parent.copy();
-			loc.state = new LocaleName(state);
-			loc.coords = new LocaleCoords(coords);
-			loc.score = new Double(score);
-			loc.attributes = new AbstractAttribute[attributes.length];
-			loc.fileName = new String(fileName);
-			for (int i=0;i<attributes.length;++i) 
-				loc.attributes[i] = attributes[i].copy();
-		}
-		return loc;
+			Locale loc = (Locale) super.clone();
+			if (loc!=null){
+				loc.name = new LocaleName(name);
+				loc.zipCode = zipCode==null?null:new ZipCode(zipCode);
+				loc.parent = parent==null?null:parent.copy();
+				loc.state = new LocaleName(state);
+				loc.coords = new LocaleCoords(coords);
+				loc.score = new Double(score);
+				loc.attributes = new AbstractAttribute[attributes.length];
+				loc.fileName = new String(fileName);
+				for (int i=0;i<attributes.length;++i) 
+					loc.attributes[i] = attributes[i].copy();
+			}
+			return loc;
 		}
 		catch(Exception e){
 			return null;
@@ -202,7 +213,32 @@ public class Locale implements Comparable<Locale>{
 			int arrayInd = af.attrType.path[0].idx;//This filter belongs to an attribute found in this index of the locale attribute array
 			attributes[arrayInd].filter(af);
 		}
+
+	}
+
+
+	/**
+	 * Based on the score and weight of all the sub-attributes and based on the fit, calculate the final Locale score
+	 */
+	public void calcScore() {
+		score = 0.0;
+		List<Pair<Double,Double>> weight_score = new ArrayList<Pair<Double,Double>>();
+		for (AbstractAttribute attr : attributes){
+			weight_score.addAll(attr.getScores());
+		}
+		//--The total weight of all the attributes must always be numAttributes * MAX_WEIGHT.
+		//-- Gather the weight of all the attributes, calculate an expansion factor and multiply each weight by that factor
+		//-- Then calculate each weight*score and add them up.
+		double sumWeights = 0;
+		for (Pair<Double,Double> w_s : weight_score)
+			sumWeights += w_s.fst;
+		double factor = (AttrType.numBotAttributes*AbstractFilter.MAX_WEIGHT)/sumWeights;
+		for (Pair<Double,Double> w_s : weight_score)
+			score += w_s.fst*factor*w_s.snd;
 		
+		if (Double.isNaN(fit)==false)
+			score *=fit;
+
 	}
 
 }

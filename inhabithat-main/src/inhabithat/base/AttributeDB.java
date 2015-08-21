@@ -2,7 +2,15 @@ package inhabithat.base;
 
 import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.base.AttributeDB.ScoreCalcType;
+import inhabithat.base.LocaleName.NameFormat;
+import inhabithat.utils.InhabithatConfig;
+import inhabithat.utils.ListTools;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -99,6 +107,7 @@ public class AttributeDB {
 		}
 
 		public static List<AttrType> botAttributes = new ArrayList<AttrType>();
+		public static int numBotAttributes = botAttributes.size();//number of low level attributes carrying data
 		public static AttrType[] topAttributes = parseArrtibutes(new ArrayList<AttrType>(),0);
 		private static int attri = 0;//running index for this method
 		/**
@@ -137,6 +146,7 @@ public class AttributeDB {
 			return children.toArray(new AttrType[children.size()]);
 		}
 	}//End enum AttrType
+
 	private static Set<AttrType> staticScore;
 	private static Set<AttrType> biggerIsBetter;
 	static {
@@ -186,6 +196,46 @@ public class AttributeDB {
 		return 0;
 	};
 
+	/**
+	 * Read current database, create a dataframe with all attribute values and create a min-max file
+	 */
+	private void createSummaryFiles(){
+		File dir = new File(InhabithatConfig.getInstance().locDBPath);
+		File[] locFiles = dir.listFiles();
+		if (locFiles != null) {
+			try {
+				String summaryFile = InhabithatConfig.getInstance().locDBSummaryPath+"/summary_df.txt";
+				String minmaxFile = InhabithatConfig.getInstance().locDBSummaryPath+"/minmax_df.txt";
+				//BufferedWriter summaryWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(summaryFile,false),"UTF-8"));//overwrite any existing file
+				//BufferedWriter minmaxWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(minmaxFile,false),"UTF-8"));//overwrite any existing file
+				DataFrame df = new DataFrame();
+				List<String> titles = new ArrayList<String>();
+				titles.add("city"); titles.add("state");
+				titles.addAll(ListTools.listToString(AttrType.botAttributes));
+				df.setTitles(titles);
 
+				for (File locFile : locFiles) {
+					Locale loc = new Locale(locFile.getAbsolutePath());
+					List<String> data = new ArrayList<String>();
+					data.add(loc.name.formatAs(NameFormat.Lower_));
+					data.add(loc.state.formatAs(NameFormat.Lower_));
+					for (AttrType attr : AttrType.botAttributes){
+						data.add((String.valueOf(loc.getAttributeData(attr))));
+					}
+					df.addDataRow(data);
+				}
+				df.write(summaryFile,false);
+				df.writeMinMax(minmaxFile,false);
+				//summaryWriter.close();
+				//minmaxWriter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+		}
+	}
 
 }

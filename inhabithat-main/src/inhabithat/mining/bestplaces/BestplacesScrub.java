@@ -1,5 +1,5 @@
 package inhabithat.mining.bestplaces;
-import inhabithat.base.AbstractAttribute.AttrType;
+import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.base.Attribute;
 import inhabithat.base.Locale;
 import inhabithat.base.LocaleName;

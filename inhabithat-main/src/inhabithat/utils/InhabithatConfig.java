@@ -11,6 +11,8 @@ public class InhabithatConfig {
 	public String citiesPath;
 	public String rawPath;
 	public String locPath;
+	public String locDBPath;//path to most up to date locale database
+	public String locDBSummaryPath;//path to most up to date locale database
 	
 	//---Configurations
 	public boolean metricSystem;// true metric, false imperial
@@ -57,5 +59,7 @@ public class InhabithatConfig {
 		citiesPath = dataPath + "/cities";
 		locPath = dataPath + "/locales";
 		rawPath = dataPath + "/raw";
+		locDBPath = dataPath + "/locales_10_8";
+		locDBSummaryPath =  dataPath + "/locales_10_8_summary";
 	}
 }

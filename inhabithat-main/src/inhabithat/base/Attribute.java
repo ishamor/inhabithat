@@ -2,11 +2,14 @@ package inhabithat.base;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import compare.filter.AbstractFilter;
 import compare.filter.AttributeFilter;
 import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.base.AttributeDB.ScoreCalcType;
+import inhabithat.utils.Pair;
 import inhabithat.utils.StringTools;
 import inhabithat.utils.ThreadTools;
 
@@ -57,9 +60,8 @@ public class Attribute extends AbstractAttribute{
 	}
 
 	@Override
-	public double calcScore() {
-		// TODO Auto-generated method stub
-		return 0;
+	public List<Pair<Double,Double>> getScores() {
+		return Arrays.asList(new Pair<Double,Double>(weight,score));
 	}
 
 	@Override
@@ -90,7 +92,7 @@ public class Attribute extends AbstractAttribute{
 			ThreadTools.throwException("Attribute.filter(): Incorrect Attribute Type in filtering, passed "+filter.attrType+" to "+type);
 		}
 		weight = filter.weight;
-		if (type.scoreType==ScoreCalcType.COMPARATIVE)
+		if (AttributeDB.scoreType(type)==ScoreCalcType.COMPARATIVE)
 			score = filter.getScore(this);
 
 	}

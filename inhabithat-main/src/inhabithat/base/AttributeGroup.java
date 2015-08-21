@@ -1,11 +1,13 @@
 package inhabithat.base;
 
 import inhabithat.base.AttributeDB.AttrType;
+import inhabithat.utils.Pair;
 import inhabithat.utils.StringTools;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import compare.filter.AbstractFilter;
 import compare.filter.AttributeFilter;
@@ -39,11 +41,21 @@ public class AttributeGroup extends AbstractAttribute{
 		}
 		
 	}
+	public double getAttributeData(AttrType attr) {
+		if (attr.depth==depth()+1)//Attribute is one of this group's attributes
+			return ((Attribute)attributes[attr.idx]).data;
+		else{//atribute is lower in the hierarachy, part of a sub-group of this group
+			return ((AttributeGroup)attributes[attr.path[depth()+1].idx]).getAttributeData(attr);
+		}
+	}
 	public String toString(){return type.toString();}
 	@Override
-	public double calcScore() {
-		// TODO Auto-generated method stub
-		return 0;
+	public List<Pair<Double,Double>> getScores() {
+		List<Pair<Double,Double>> weight_score = new ArrayList<Pair<Double,Double>>();
+		for (AbstractAttribute attr : attributes){
+			weight_score.addAll(attr.getScores());
+		}
+		return weight_score;
 	}
 	@Override
 	public void writeFile(BufferedWriter writer, int writeDepth) throws IOException {
@@ -97,4 +109,5 @@ public class AttributeGroup extends AbstractAttribute{
 		}
 		
 	}
+	
 }
