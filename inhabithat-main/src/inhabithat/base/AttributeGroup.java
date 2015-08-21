@@ -25,7 +25,6 @@ public class AttributeGroup extends AbstractAttribute{
 	public AttributeGroup(AttrType gtype){
 		this.type=gtype;
 		weight = AbstractFilter.MAX_WEIGHT;
-		//this.attrTypes = grp2Attr(gtype);
 	}
 	
 	
@@ -54,6 +53,12 @@ public class AttributeGroup extends AbstractAttribute{
 		List<Pair<Double,Double>> weight_score = new ArrayList<Pair<Double,Double>>();
 		for (AbstractAttribute attr : attributes){
 			weight_score.addAll(attr.getScores());
+		}
+		//--multiply all weights by this group weight if it is smaller than max.
+		if (weight<AbstractFilter.MAX_WEIGHT){
+			for (Pair<Double,Double> w_s : weight_score){
+				w_s.fst = w_s.fst*weight;
+			}
 		}
 		return weight_score;
 	}

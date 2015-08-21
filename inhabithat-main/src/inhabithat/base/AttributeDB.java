@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -172,34 +173,43 @@ public class AttributeDB {
 	public static boolean biggerIsBetter(AttrType type) {
 		return biggerIsBetter.contains(type);
 	}
-	private static Map<AttrType,Double> maxValues;
-	private static Map<AttrType,Double> minValues;
+	private static Map<AttrType,Double> maxValues = new HashMap<AttrType,Double>();
+	private static Map<AttrType,Double> minValues = new HashMap<AttrType,Double>();
 	static{
-		//TODO Go over all DB and create a file with a table. Each attribute is a column with the name on top and a list of all values at bottom. First column will be
-		//city names and then a colums with state names.
-		//Try and load this into R dataframe and check out histograms of several attributes. 
-		//Create another file with just the min/max values for all attributes. 
-		//Read this file here on startup and fill in the min/max values map.
+		DataFrame minMaxdf = new DataFrame(InhabithatConfig.getInstance().locDBSummaryPath+"/minmax_df.txt");
+		for (int ci=0 ;ci<minMaxdf.numCols();++ci){
+			try{
+				String attrName = minMaxdf.getTitles().get(ci);
+				AttrType attr = AttrType.valueOf(attrName);
+				double valMin = Double.valueOf(minMaxdf.getData(0, ci));
+				double valMax = Double.valueOf(minMaxdf.getData(1, ci));
+				minValues.put(attr, valMin);
+				maxValues.put(attr, valMax);
+			}
+			catch(Exception e){
+				
+			}
+		}
+		//Create a map from AttrType to min and max values.
+		
 	}
 	/**
 	 * Returns the minimal value of this attribute in our database
 	 */
 	public static double minValue(AttrType type) {
-		// TODO Auto-generated method stub
-		return 0;
+		return minValues.get(type);
 	}
 	/**
 	 * Returns the minimal value of this attribute in our database
 	 */
 	public static double maxValue(AttrType type) {
-		// TODO Auto-generated method stub
-		return 0;
+		return maxValues.get(type);
 	};
 
 	/**
 	 * Read current database, create a dataframe with all attribute values and create a min-max file
 	 */
-	private void createSummaryFiles(){
+	public static void createSummaryFiles(){
 		File dir = new File(InhabithatConfig.getInstance().locDBPath);
 		File[] locFiles = dir.listFiles();
 		if (locFiles != null) {
@@ -209,33 +219,34 @@ public class AttributeDB {
 				//BufferedWriter summaryWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(summaryFile,false),"UTF-8"));//overwrite any existing file
 				//BufferedWriter minmaxWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(minmaxFile,false),"UTF-8"));//overwrite any existing file
 				DataFrame df = new DataFrame();
-				List<String> titles = new ArrayList<String>();
-				titles.add("city"); titles.add("state");
-				titles.addAll(ListTools.listToString(AttrType.botAttributes));
-				df.setTitles(titles);
-
-				for (File locFile : locFiles) {
-					Locale loc = new Locale(locFile.getAbsolutePath());
-					List<String> data = new ArrayList<String>();
-					data.add(loc.name.formatAs(NameFormat.Lower_));
-					data.add(loc.state.formatAs(NameFormat.Lower_));
-					for (AttrType attr : AttrType.botAttributes){
-						data.add((String.valueOf(loc.getAttributeData(attr))));
-					}
-					df.addDataRow(data);
-				}
-				df.write(summaryFile,false);
+//				List<String> titles = new ArrayList<String>();
+//				titles.add("city"); titles.add("state");
+//				titles.addAll(ListTools.listToString(AttrType.botAttributes));
+//				df.setTitles(titles);
+//
+//				for (File locFile : locFiles) {
+//					Locale loc =Locale.readFile(locFile.getAbsolutePath());
+//					List<String> data = new ArrayList<String>();
+//					data.add(loc.name.formatAs(NameFormat.Lower_));
+//					data.add(loc.state.formatAs(NameFormat.Lower_));
+//					for (AttrType attr : AttrType.botAttributes){
+//						data.add((String.valueOf(loc.getAttributeData(attr))));
+//					}
+//					df.addDataRow(data);
+//				}
+//				df.write(summaryFile,false);
+				df = new DataFrame(summaryFile);
 				df.writeMinMax(minmaxFile,false);
 				//summaryWriter.close();
 				//minmaxWriter.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			
-			
 			
 		}
 	}
 
+	public static void main(String[] args){
+		AttributeDB.createSummaryFiles();
+	}
 }

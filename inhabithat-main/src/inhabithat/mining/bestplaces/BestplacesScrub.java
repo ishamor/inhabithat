@@ -23,7 +23,7 @@ public class BestplacesScrub {
 	 */
 	private static String urlBase = "http://www.bestplaces.net/";
 	private static String decRegex = "\\d+\\.?\\d*";
-	private static Long sleepTimeMS = 15000L;//20 seconds
+	private static Long sleepTimeMS = 15000L;//15 seconds
 	public static void main(String[] args) throws Exception {
 		try {
 			//BestplacesScrub.mineClimate("california", "los_angeles");
@@ -37,7 +37,8 @@ public class BestplacesScrub {
 			//BestplacesScrub.mineCost("california", "los_angeles");
 			//BestplacesScrub.mineReligion("california", "los_angeles");
 			//BestplacesScrub.mineVoting("california", "los_angeles");
-			printPage("http://www.bestplaces.net/people/city/new_york/new_york");
+			//printPage("http://www.bestplaces.net/climate/city/north_carolina/winston-salem");
+			testMatch();
 
 		}
 		catch (Exception err){
@@ -238,6 +239,7 @@ public class BestplacesScrub {
 		URL oracle = new URL(url);
 		BufferedReader in = new BufferedReader(new InputStreamReader(oracle.openStream()));
 		String inputLine;
+		int lineCnt=0;
 		while ((inputLine = in.readLine()) != null){
 			for (int pi=0;pi<patterns.size();++pi){
 				Matcher match = patterns.get(pi).matcher(inputLine);
@@ -245,6 +247,7 @@ public class BestplacesScrub {
 					attrValues.set(pi, match.group(1));
 				}
 			}
+			++lineCnt;
 		}
 		in.close();
 	}
@@ -274,9 +277,10 @@ public class BestplacesScrub {
 	private static void testMatch(){
 		//Pattern.compile(">Unemployment Rate<.*?>("+decRegex+")%",Pattern.CANON_EQ)
 		//Pattern rainPtrn = Pattern.compile(">Unemployment Rate</a></td><td>(\\d+\\.?\\d*)%",Pattern.CANON_EQ);
-		Pattern rainPtrn = Pattern.compile(">Unemployment Rate<.*?>("+decRegex+")%",Pattern.CANON_EQ);
+		//patterns.add(Pattern.compile("Snowfall.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		Pattern rainPtrn = Pattern.compile("Rainfall.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ);
 		Matcher rainMtch = rainPtrn.matcher("");
-		String rpath = InhabithatConfig.getInstance().rawPath+"/Springer_LA_economy_raw.txt";
+		String rpath = InhabithatConfig.getInstance().rawPath+"/Springer_Winston_climate_raw.txt";
 		//String rpath = "http://www.bestplaces.net/people/city/california/los_angeles";
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(rpath), "UTF-8"));

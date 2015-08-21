@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,7 @@ public class Locale implements Comparable<Locale>{
 		this.state = new LocaleName(newState);
 		this.fileName = locFileName(name.formatAs(NameFormat.Lower_), state.formatAs(NameFormat.Lower_));
 	}
-	public Locale(String readPath) {
-		readFile(readPath);
-	}
-	
+
 	public void addAttribute(Attribute attr){
 		if (attr.depth()==0)
 			attributes[attr.index()] = attr;
@@ -235,10 +234,22 @@ public class Locale implements Comparable<Locale>{
 		double factor = (AttrType.numBotAttributes*AbstractFilter.MAX_WEIGHT)/sumWeights;
 		for (Pair<Double,Double> w_s : weight_score)
 			score += w_s.fst*factor*w_s.snd;
-		
+
 		if (Double.isNaN(fit)==false)
 			score *=fit;
 
 	}
 
+
+	public static void sortByName(List<Locale> locales) {
+		Collections.sort(locales,new  Comparator<Locale>(){
+
+			@Override
+			public int compare(Locale l1, Locale l2) {
+				String name1 = l1.name.toString()+l1.stateName();
+				String name2 = l2.name.toString()+l2.stateName();
+				return name1.compareTo(name2);
+			}
+		});
+	}
 }

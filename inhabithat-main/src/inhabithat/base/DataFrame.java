@@ -84,13 +84,13 @@ public class DataFrame {
 	/**
 	 * Write content of dataframe to file. Return write status.
 	 */
-	public boolean write(String fname) throws Exception{
+	public boolean write(String fname){
 		return write(fname,false);
 	}
 	/**
 	 * Data frame only reads and write to files of type _df.txt
 	 */
-	public boolean write(String fname,boolean append) throws Exception{
+	public boolean write(String fname,boolean append){
 		if (isLegalWriteFile(fname)==false) return false;
 		fname = makeDFFile(fname);
 		try {
@@ -107,18 +107,19 @@ public class DataFrame {
 		}
 		return true;
 	}
-	public boolean writeMinMax(String fname,boolean append) throws Exception{
+	public boolean writeMinMax(String fname,boolean append){
 		if (isLegalWriteFile(fname)==false) return false;
 		fname = makeDFFile(fname);
+		double upperBound = Integer.MAX_VALUE;
+		double lowerBound = Integer.MIN_VALUE;
 		try {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fname,append),"UTF-8"));
 			writer.write(ListTools.concat(titles,"\t"));
 			writer.write("\n");
 			Double[] mins = new Double[numCols()];
 			Double[] maxs = new Double[numCols()];
-			Arrays.fill(mins,AbstractFilter.MAX_SCORE+1);
-			Arrays.fill(maxs,AbstractFilter.MIN_SCORE-1);
-			
+			Arrays.fill(mins,upperBound);
+			Arrays.fill(maxs,lowerBound);
 			for (List<String> row : data){
 				for (int vi=0;vi<row.size();++vi){
 					String value = row.get(vi);
@@ -134,6 +135,14 @@ public class DataFrame {
 						
 					}
 				}
+			}
+			//--If nothing has changed, place NaN as value
+		
+			for (int i=0;i<numCols();++i){
+				if (mins[i]==upperBound)
+					mins[i]=Double.NaN;
+				if (maxs[i]==lowerBound)
+					maxs[i]=Double.NaN;
 			}
 			List<String> minStrings = ListTools.listToString(Arrays.asList(mins));
 			List<String> maxStrings = ListTools.listToString(Arrays.asList(maxs));
@@ -191,6 +200,10 @@ public class DataFrame {
 		if (colNum<0) return null;
 		return data.get(rowNum).get(colNum);
 	}
+	public String getData(int rowNum, int colNum) {
+		if (validRowNum(rowNum)==false || validColNum(colNum)==false) return null;
+		return data.get(rowNum).get(colNum);
+	}
 	/**
 	 * Converts from name in title row to column name. 
 	 * @return -1 if title is not present. Else a number between 1 and numCols()
@@ -201,6 +214,9 @@ public class DataFrame {
 	}
 	private boolean validRowNum(int rowNum) {
 		return rowNum>=0&&rowNum<numRows();
+	}
+	private boolean validColNum(int colNum) {
+		return colNum>=0&&colNum<numCols();
 	}
 	
 }
