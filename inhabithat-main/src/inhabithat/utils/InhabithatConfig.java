@@ -59,7 +59,7 @@ public class InhabithatConfig {
 		citiesPath = dataPath + "/cities";
 		locPath = dataPath + "/locales";
 		rawPath = dataPath + "/raw";
-		locDBPath = dataPath + "/locales_10_8";
-		locDBSummaryPath =  dataPath + "/locales_10_8_summary";
+		locDBPath = dataPath + "/locales_21_8";
+		locDBSummaryPath =  dataPath + "/locales_db_summary";
 	}
 }

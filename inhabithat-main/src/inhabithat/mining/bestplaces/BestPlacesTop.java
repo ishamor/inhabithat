@@ -19,10 +19,12 @@ public class BestPlacesTop {
 		mine();
 	}
 	private void mine() {
-		//int[] missing = {14,26,114,141,226,276,292};
-		int[] missing = {253};
+		int[] missing = {177,184,199};
+		//int[] missing = {0   ,2   ,5  ,11  ,15  ,24  ,26  ,28  ,40  ,41  ,54  ,69  ,79  ,87  ,88  ,99 ,100 ,110 ,134 ,135 ,138 ,139 ,142 ,148 ,155 ,159 ,166 ,168 ,177 ,179 ,183 ,184 ,185 ,186 ,192 ,199 ,202 ,210 ,211 ,213 ,214 ,215 ,220 ,228 ,229 ,232 ,236 ,242 ,245 ,246 ,248 ,251 ,259 ,264 ,265 ,266 ,271 ,277 ,284 ,286 ,288 ,289};
 		for (int li: missing){
 			Locale loc = locales.get(li);
+			//complete missing fields
+			loc = Locale.readFile(Locale.locFileName(loc.townName(), loc.stateName(), InhabithatConfig.getInstance().locDBPath));
 			BestplacesScrub.mineAll(loc);
 			loc.writeFile();
 		}

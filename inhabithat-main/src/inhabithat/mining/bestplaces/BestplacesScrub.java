@@ -23,7 +23,7 @@ public class BestplacesScrub {
 	 */
 	private static String urlBase = "http://www.bestplaces.net/";
 	private static String decRegex = "\\d+\\.?\\d*";
-	private static Long sleepTimeMS = 15000L;//15 seconds
+	private static Long sleepTimeMS = 10000L;//15 seconds
 	public static void main(String[] args) throws Exception {
 		try {
 			//BestplacesScrub.mineClimate("california", "los_angeles");
@@ -37,8 +37,8 @@ public class BestplacesScrub {
 			//BestplacesScrub.mineCost("california", "los_angeles");
 			//BestplacesScrub.mineReligion("california", "los_angeles");
 			//BestplacesScrub.mineVoting("california", "los_angeles");
-			//printPage("http://www.bestplaces.net/climate/city/north_carolina/winston-salem");
-			testMatch();
+			printPage("http://www.bestplaces.net/climate/city/texas/el_paso");
+			//testMatch();
 
 		}
 		catch (Exception err){
@@ -52,28 +52,28 @@ public class BestplacesScrub {
 		String state = LocaleName.format(loc.stateName(),NameFormat.Lower_);
 		try{
 			System.out.println();
-			mineClimate(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineCost(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineCrime(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineEconomy(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineEducation(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineHealth(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineHousing(state, city,loc);
-			Thread.sleep(sleepTimeMS);
 			minePeople(state, city,loc);
 			Thread.sleep(sleepTimeMS);
-			mineReligion(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineTransportation(state, city,loc);
-			Thread.sleep(sleepTimeMS);
-			mineVoting(state, city,loc);
-			Thread.sleep(sleepTimeMS);
+//			mineClimate(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineCost(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineCrime(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineEconomy(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineEducation(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineHealth(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineHousing(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineReligion(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineTransportation(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
+//			mineVoting(state, city,loc);
+//			Thread.sleep(sleepTimeMS);
 		}
 		catch (Exception e){
 			e.printStackTrace();
@@ -196,8 +196,8 @@ public class BestplacesScrub {
 		List<AttrType> attrNames = new ArrayList<AttrType>(Arrays.asList(AttrType.POPULATION,AttrType.POPULATION_DENSITY,
 				AttrType.WHITE, AttrType.BLACK,AttrType.ASIAN, AttrType.HISPANIC));
 		List<String> attrValues = new ArrayList<String>(Arrays.asList(new String[attrNames.size()]));
-		patterns.add(Pattern.compile(">Population\\<.*?>(\\d{1,2}\\,?\\d{0,3}\\,?\\d{0,3})<",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile(">Pop. Density\\<.*?>(\\d{1,3}\\,\\d{0,3})<",Pattern.CANON_EQ));//people per sq. mile
+		patterns.add(Pattern.compile(">Population<.*?>(\\d{1,2}\\,?\\d{0,3}\\,?\\d{0,3})<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile(">Pop. Density<.*?>(\\d{1,3}(\\,\\d{0,3})?)<",Pattern.CANON_EQ));//people per sq. mile
 		patterns.add(Pattern.compile("White<.*?(\\d+\\.?\\d*)%",Pattern.CANON_EQ));//percentages
 		patterns.add(Pattern.compile("Black<.*?(\\d+\\.?\\d*)%",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile("Asian<.*?(\\d+\\.?\\d*)%",Pattern.CANON_EQ));
@@ -221,7 +221,7 @@ public class BestplacesScrub {
 		patterns.add(Pattern.compile("Jan. Low.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile("Comfort Index \\(higher=better\\).*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
 		patterns.add(Pattern.compile("UV Index\\S.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
-		patterns.add(Pattern.compile("Elevation ft.*?>(\\d+\\.?\\d*)<",Pattern.CANON_EQ));
+		patterns.add(Pattern.compile("Elevation ft.*?>(\\d{1,3}(\\,\\d{0,3})?)<",Pattern.CANON_EQ));
 
 		minePrint("climate",state,city,patterns,attrValues,attrNames,loc);
 

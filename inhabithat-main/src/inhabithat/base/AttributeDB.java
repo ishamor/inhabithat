@@ -216,29 +216,25 @@ public class AttributeDB {
 			try {
 				String summaryFile = InhabithatConfig.getInstance().locDBSummaryPath+"/summary_df.txt";
 				String minmaxFile = InhabithatConfig.getInstance().locDBSummaryPath+"/minmax_df.txt";
-				//BufferedWriter summaryWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(summaryFile,false),"UTF-8"));//overwrite any existing file
-				//BufferedWriter minmaxWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(minmaxFile,false),"UTF-8"));//overwrite any existing file
 				DataFrame df = new DataFrame();
-//				List<String> titles = new ArrayList<String>();
-//				titles.add("city"); titles.add("state");
-//				titles.addAll(ListTools.listToString(AttrType.botAttributes));
-//				df.setTitles(titles);
-//
-//				for (File locFile : locFiles) {
-//					Locale loc =Locale.readFile(locFile.getAbsolutePath());
-//					List<String> data = new ArrayList<String>();
-//					data.add(loc.name.formatAs(NameFormat.Lower_));
-//					data.add(loc.state.formatAs(NameFormat.Lower_));
-//					for (AttrType attr : AttrType.botAttributes){
-//						data.add((String.valueOf(loc.getAttributeData(attr))));
-//					}
-//					df.addDataRow(data);
-//				}
-//				df.write(summaryFile,false);
-				df = new DataFrame(summaryFile);
+				List<String> titles = new ArrayList<String>();
+				titles.add("city"); titles.add("state");
+				titles.addAll(ListTools.listToString(AttrType.botAttributes));
+				df.setTitles(titles);
+
+				for (File locFile : locFiles) {
+					Locale loc =Locale.readFile(locFile.getAbsolutePath());
+					List<String> data = new ArrayList<String>();
+					data.add(loc.name.formatAs(NameFormat.Lower_));
+					data.add(loc.state.formatAs(NameFormat.Lower_));
+					for (AttrType attr : AttrType.botAttributes){
+						data.add((String.valueOf(loc.getAttributeData(attr))));
+					}
+					df.addDataRow(data);
+				}
+				df.write(summaryFile,false);
+				//df = new DataFrame(summaryFile);
 				df.writeMinMax(minmaxFile,false);
-				//summaryWriter.close();
-				//minmaxWriter.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

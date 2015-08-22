@@ -87,6 +87,9 @@ public class Locale implements Comparable<Locale>{
 	public String stateName() {
 		return state.toString();
 	}
+	public String townName() {
+		return name.toString();
+	}
 	public String toString(){
 		return name+", "+stateName();
 	}
