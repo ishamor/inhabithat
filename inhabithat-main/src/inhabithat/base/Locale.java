@@ -28,7 +28,7 @@ import compare.filter.LocaleFilter;
  * @author ishamor
  *
  */
-public class Locale implements Comparable<Locale>{
+public class Locale implements Cloneable, Comparable<Locale>{
 	enum LocaleType {STATE,COUNTY,CITY,TOWN};
 	public LocaleName name;
 	public ZipCode zipCode;
@@ -79,6 +79,9 @@ public class Locale implements Comparable<Locale>{
 	}
 	public String name(NameFormat format){
 		return name.formatAs(format);
+	}
+	public Double getScore(){
+		return score;
 	}
 	/**
 	 * Change when moving to pointers to State Locale later on
@@ -179,23 +182,24 @@ public class Locale implements Comparable<Locale>{
 
 	@Override
 	public int compareTo(Locale other) {
-		return this.score.compareTo(other.score);
+		//return this.score.compareTo(other.score);
+		return other.score.compareTo(this.score);//sort in descending order
 	}
 	public Locale copy() {
 		try{
 			Locale loc = (Locale) super.clone();
-			if (loc!=null){
-				loc.name = new LocaleName(name);
-				loc.zipCode = zipCode==null?null:new ZipCode(zipCode);
-				loc.parent = parent==null?null:parent.copy();
-				loc.state = new LocaleName(state);
-				loc.coords = new LocaleCoords(coords);
-				loc.score = new Double(score);
-				loc.attributes = new AbstractAttribute[attributes.length];
-				loc.fileName = new String(fileName);
-				for (int i=0;i<attributes.length;++i) 
-					loc.attributes[i] = attributes[i].copy();
-			}
+//			if (loc!=null){
+//				loc.name = new LocaleName(name);
+//				loc.zipCode = zipCode==null?null:new ZipCode(zipCode);
+//				loc.parent = parent==null?null:parent.copy();
+//				loc.state = new LocaleName(state);
+//				loc.coords = new LocaleCoords(coords);
+//				loc.score = new Double(score);
+//				loc.attributes = new AbstractAttribute[attributes.length];
+//				loc.fileName = new String(fileName);
+//				for (int i=0;i<attributes.length;++i) 
+//					loc.attributes[i] = attributes[i].copy();
+//			}
 			return loc;
 		}
 		catch(Exception e){

@@ -23,12 +23,13 @@ public class Attribute extends AbstractAttribute{
 		this.type = type;
 		this.rawData = rawData;
 		this.data = str2Double(rawData);
-		if (AttributeDB.scoreType(type)==ScoreCalcType.STATIC){
+		if (AttributeDB.scoreType(type)==ScoreCalcType.STATIC && rawData!=null){
 			weight = AbstractFilter.MAX_WEIGHT;
 			score = AttributeFilter.getStaticScore(this);
 		}
 		else {
 			weight = AbstractFilter.MIN_WEIGHT;
+			score = AbstractFilter.MIN_SCORE;
 		}
 		//TODO do static steScore and setWeight. If attribute is not comparable type, set weight to max and score according to calculation.
 		//else, set weight to zero and score to Nan.
@@ -73,12 +74,12 @@ public class Attribute extends AbstractAttribute{
 	public AttrType[] path() {
 		return type.path;
 	}
-	public Attribute copyElement() {
+	public Attribute copy() {
 		Attribute attr = (Attribute) super.copy();
 
 		if (attr != null){
-			attr.rawData = new String(rawData);
-			attr.data = new Double(data);
+			attr.rawData = rawData==null?null : new String(rawData);
+			attr.data = data==null?null:new Double(data);
 		}
 		return attr;
 	}

@@ -13,7 +13,7 @@ import java.util.Set;
 import compare.filter.AttributeFilter;
 
 
-public abstract class AbstractAttribute {
+public abstract class AbstractAttribute implements Cloneable {
 	protected Double score;
 	protected Double weight;
 	public AttrType type;
@@ -52,11 +52,12 @@ public abstract class AbstractAttribute {
 	public AbstractAttribute copy() {
 		try {
 			AbstractAttribute ret = (AbstractAttribute) super.clone();
-			ret.score = new Double(score);
-			ret.weight = new Double(weight);
+			ret.score = score==null? null : new Double(score);
+			ret.weight = weight==null? null : new Double(weight);
 			ret.type = type;
 			return ret;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

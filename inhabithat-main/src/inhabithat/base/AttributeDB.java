@@ -108,9 +108,13 @@ public class AttributeDB {
 		}
 
 		public static List<AttrType> botAttributes = new ArrayList<AttrType>();
-		public static int numBotAttributes = botAttributes.size();//number of low level attributes carrying data
-		public static AttrType[] topAttributes = parseArrtibutes(new ArrayList<AttrType>(),0);
+		public static int numBotAttributes;//number of low level attributes carrying data
+		public static AttrType[] topAttributes;
 		private static int attri = 0;//running index for this method
+		static {
+			topAttributes = parseArrtibutes(new ArrayList<AttrType>(),0);
+			numBotAttributes = botAttributes.size();
+		}
 		/**
 		 * Method converts the enum AttrType to a tree structure under Locale. Each AttrType has a depth related to it.
 		 * AttrType appear in order of relation - that is, an attribute with larger depth after an attribute with lesser depth is a sub-attribute.
@@ -148,12 +152,14 @@ public class AttributeDB {
 		}
 	}//End enum AttrType
 
+	
 	private static Set<AttrType> staticScore;
 	private static Set<AttrType> biggerIsBetter;
 	static {
 		staticScore = new HashSet<AttrType>(Arrays.asList(AttrType.COMFORT_IDX, AttrType.HEALTH_COST, AttrType.PROPERTY_CRIME, 
-				AttrType.VIOLENT_CRIME, AttrType.PUPIL_TEACHER_RATIO, AttrType.COMMUTE_TIME,AttrType.DR_PER_100K, AttrType.WATER_QLTY));
-		biggerIsBetter = new HashSet<AttrType>(Arrays.asList(AttrType.AIR_QLTY, AttrType.INCOME_TAX, AttrType.SALES_TAX, AttrType.UNEMPLOYMENT_RATE));
+				AttrType.VIOLENT_CRIME, AttrType.PUPIL_TEACHER_RATIO, AttrType.COMMUTE_TIME,AttrType.DR_PER_100K, AttrType.AIR_QLTY,AttrType.WATER_QLTY));
+		biggerIsBetter = new HashSet<AttrType>(Arrays.asList(AttrType.AIR_QLTY, AttrType.WATER_QLTY, AttrType.COMFORT_IDX,
+				AttrType.PUPIL_TEACHER_RATIO,AttrType.DR_PER_100K));
 	}
 
 
@@ -187,11 +193,11 @@ public class AttributeDB {
 				maxValues.put(attr, valMax);
 			}
 			catch(Exception e){
-				
+
 			}
 		}
 		//Create a map from AttrType to min and max values.
-		
+
 	}
 	/**
 	 * Returns the minimal value of this attribute in our database
@@ -210,38 +216,66 @@ public class AttributeDB {
 	 * Read current database, create a dataframe with all attribute values and create a min-max file
 	 */
 	public static void createSummaryFiles(){
+		String summaryFile = InhabithatConfig.getInstance().locDBSummaryPath+"/summary_df.txt";
+		String minmaxFile = InhabithatConfig.getInstance().locDBSummaryPath+"/minmax_df.txt";
+		DataFrame df = new DataFrame();
+		List<String> titles = new ArrayList<String>();
+		titles.add("city"); titles.add("state");
+		titles.addAll(ListTools.listToString(AttrType.botAttributes));
+		df.setTitles(titles);
+		List<Locale> locales = loadDB();
+		for (Locale loc : locales) {
+			List<String> data = new ArrayList<String>();
+			data.add(loc.name.formatAs(NameFormat.Lower_));
+			data.add(loc.state.formatAs(NameFormat.Lower_));
+			for (AttrType attr : AttrType.botAttributes){
+				data.add((String.valueOf(loc.getAttributeData(attr))));
+			}
+			df.addDataRow(data);
+		}
+		df.write(summaryFile,false);
+		//df = new DataFrame(summaryFile);
+		df.writeMinMax(minmaxFile,false);
+
+	}
+	/**
+	 * Like the first only add a Score column and get locales in input
+	 */
+	public static void createSummaryFiles2(List<Locale> locales){
+		String summaryFile = InhabithatConfig.getInstance().locDBSummaryPath+"/summary_score_df.txt";
+		//String minmaxFile = InhabithatConfig.getInstance().locDBSummaryPath+"/minmax_df.txt";
+		DataFrame df = new DataFrame();
+		List<String> titles = new ArrayList<String>();
+		titles.add("city"); titles.add("state"); titles.add("score");
+		titles.addAll(ListTools.listToString(AttrType.botAttributes));
+		df.setTitles(titles);
+		//List<Locale> locales = loadDB();
+		for (Locale loc : locales) {
+			List<String> data = new ArrayList<String>();
+			data.add(loc.name.formatAs(NameFormat.Lower_));
+			data.add(loc.state.formatAs(NameFormat.Lower_));
+			data.add(loc.getScore().toString());
+			for (AttrType attr : AttrType.botAttributes){
+				data.add((String.valueOf(loc.getAttributeData(attr))));
+			}
+			df.addDataRow(data);
+		}
+		df.write(summaryFile,false);
+		//df = new DataFrame(summaryFile);
+		//df.writeMinMax(minmaxFile,false);
+
+	}
+	public static List<Locale> loadDB(){
 		File dir = new File(InhabithatConfig.getInstance().locDBPath);
 		File[] locFiles = dir.listFiles();
-		if (locFiles != null) {
-			try {
-				String summaryFile = InhabithatConfig.getInstance().locDBSummaryPath+"/summary_df.txt";
-				String minmaxFile = InhabithatConfig.getInstance().locDBSummaryPath+"/minmax_df.txt";
-				DataFrame df = new DataFrame();
-				List<String> titles = new ArrayList<String>();
-				titles.add("city"); titles.add("state");
-				titles.addAll(ListTools.listToString(AttrType.botAttributes));
-				df.setTitles(titles);
-
-				for (File locFile : locFiles) {
-					Locale loc =Locale.readFile(locFile.getAbsolutePath());
-					List<String> data = new ArrayList<String>();
-					data.add(loc.name.formatAs(NameFormat.Lower_));
-					data.add(loc.state.formatAs(NameFormat.Lower_));
-					for (AttrType attr : AttrType.botAttributes){
-						data.add((String.valueOf(loc.getAttributeData(attr))));
-					}
-					df.addDataRow(data);
-				}
-				df.write(summaryFile,false);
-				//df = new DataFrame(summaryFile);
-				df.writeMinMax(minmaxFile,false);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
+		if (locFiles == null) return null;
+		List<Locale> ret = new ArrayList<Locale>();
+		for (File locFile : locFiles) {
+			Locale loc =Locale.readFile(locFile.getAbsolutePath());
+			ret.add(loc);
 		}
+		return ret;
 	}
-
 	public static void main(String[] args){
 		AttributeDB.createSummaryFiles();
 	}

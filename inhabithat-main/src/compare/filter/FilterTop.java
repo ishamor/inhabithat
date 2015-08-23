@@ -1,5 +1,6 @@
 package compare.filter;
 
+import inhabithat.base.AttributeDB;
 import inhabithat.base.Locale;
 
 import java.util.ArrayList;
@@ -10,15 +11,13 @@ public class FilterTop {
 	public static List<Locale> allLocales;
 
 	static{
-		loadLocales();
+		allLocales = AttributeDB.loadDB();
 	}
 
-	private static void loadLocales() {
-		// TODO at startup go to up to date database and load static list of all known locales. Use path and loc.readFile() for this.
-	}
-	public List<Locale> filter(List<AbstractFilter> filters){
+	public static List<Locale> filter(List<AbstractFilter> filters){
 		//Make copy of base list
 		List<Locale> ret = new ArrayList<Locale>();
+		long t0 = System.currentTimeMillis();
 		for (Locale statLoc : allLocales){
 			Locale loc = statLoc.copy();
 			for (AbstractFilter filter : filters){
@@ -30,6 +29,17 @@ public class FilterTop {
 		}
 		//Sort list and return.
 		Collections.sort(ret);
+		long t1 = System.currentTimeMillis();
+		System.out.println("Copy, score and sort time: "+(t1-t0)+"\n");
 		return ret;
+	}
+	public static void main(String[] args){
+		List<AbstractFilter> filters = new ArrayList<AbstractFilter>();
+		List<Locale> sorted = filter(filters);
+		AttributeDB.createSummaryFiles2(sorted);
+		
+		for (int li=0; li<50;++li){
+			System.out.println(sorted.get(li));
+		}
 	}
 }
