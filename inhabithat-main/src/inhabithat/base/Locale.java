@@ -70,11 +70,11 @@ public class Locale implements Cloneable, Comparable<Locale>{
 			((AttributeGroup)attributes[attr.path()[0].idx]).addAttribute(attr);
 		}
 	}
-	public double getAttributeData(AttrType attr){
+	public Attribute getAttribute(AttrType attr){
 		if (attr.depth==0)
-			return ((Attribute)attributes[attr.idx]).data;
+			return (Attribute)attributes[attr.idx];
 		else{
-			return ((AttributeGroup)attributes[attr.path[0].idx]).getAttributeData(attr);
+			return ((AttributeGroup)attributes[attr.path[0].idx]).getAttribute(attr);
 		}
 	}
 	public String name(NameFormat format){

@@ -31,6 +31,13 @@ public class AttributeFilter extends AbstractFilter {
 			range = max-attribute.data;
 		
 		Double score = (range/(max-min))*AbstractFilter.SCORE_RANGE;
+		//--Correction for PUPIL_TEACHER_RATIO which has two out-liers
+		if (attribute.type==AttrType.PUPIL_TEACHER_RATIO){
+			if(attribute.data>=30)
+				score = AbstractFilter.SCORE_RANGE;
+			else
+				score = ((attribute.data-min)/(30-min))*AbstractFilter.SCORE_RANGE;
+		}
 		
 		return score;
 	}

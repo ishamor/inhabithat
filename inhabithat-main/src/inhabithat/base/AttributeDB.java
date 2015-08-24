@@ -152,11 +152,11 @@ public class AttributeDB {
 		}
 	}//End enum AttrType
 
-	
-	private static Set<AttrType> staticScore;
+
+	private static Set<AttrType> staticScoreAttributes;
 	private static Set<AttrType> biggerIsBetter;
 	static {
-		staticScore = new HashSet<AttrType>(Arrays.asList(AttrType.COMFORT_IDX, AttrType.HEALTH_COST, AttrType.PROPERTY_CRIME, 
+		staticScoreAttributes = new HashSet<AttrType>(Arrays.asList(AttrType.COMFORT_IDX, AttrType.HEALTH_COST, AttrType.PROPERTY_CRIME, 
 				AttrType.VIOLENT_CRIME, AttrType.PUPIL_TEACHER_RATIO, AttrType.COMMUTE_TIME,AttrType.DR_PER_100K, AttrType.AIR_QLTY,AttrType.WATER_QLTY));
 		biggerIsBetter = new HashSet<AttrType>(Arrays.asList(AttrType.AIR_QLTY, AttrType.WATER_QLTY, AttrType.COMFORT_IDX,
 				AttrType.PUPIL_TEACHER_RATIO,AttrType.DR_PER_100K));
@@ -170,7 +170,7 @@ public class AttributeDB {
 	}
 
 	public static ScoreCalcType scoreType(AttrType type) {
-		if (staticScore.contains(type)) return ScoreCalcType.STATIC;
+		if (staticScoreAttributes.contains(type)) return ScoreCalcType.STATIC;
 		else return ScoreCalcType.COMPARATIVE;
 	}
 	/**
@@ -229,7 +229,7 @@ public class AttributeDB {
 			data.add(loc.name.formatAs(NameFormat.Lower_));
 			data.add(loc.state.formatAs(NameFormat.Lower_));
 			for (AttrType attr : AttrType.botAttributes){
-				data.add((String.valueOf(loc.getAttributeData(attr))));
+				data.add((String.valueOf(loc.getAttribute(attr).data)));
 			}
 			df.addDataRow(data);
 		}
@@ -256,9 +256,45 @@ public class AttributeDB {
 			data.add(loc.state.formatAs(NameFormat.Lower_));
 			data.add(loc.getScore().toString());
 			for (AttrType attr : AttrType.botAttributes){
-				data.add((String.valueOf(loc.getAttributeData(attr))));
+				data.add((String.valueOf(loc.getAttribute(attr).data)));
 			}
 			df.addDataRow(data);
+		}
+		df.write(summaryFile,false);
+		//df = new DataFrame(summaryFile);
+		//df.writeMinMax(minmaxFile,false);
+
+	}
+	/**
+	 * Summary of all static attributes, each with score, data and min-max values
+	 */
+	public static void createSummaryFiles3(List<Locale> locales){
+		String summaryFile = InhabithatConfig.getInstance().locDBSummaryPath+"/summary_static_df.txt";
+		DataFrame df = new DataFrame();
+		List<String> titles = new ArrayList<String>();
+		titles.add("city"); titles.add("state"); titles.add("score");
+		titles.addAll(ListTools.listToString(Arrays.asList(staticScoreAttributes.toArray())));
+		df.setTitles(titles);
+		//List<Locale> locales = loadDB();
+		for (Locale loc : locales) {
+			for (int si=0;si<4;si++){
+				List<String> data = new ArrayList<String>();
+				data.add(loc.name.formatAs(NameFormat.Lower_));
+				data.add(loc.state.formatAs(NameFormat.Lower_));
+				data.add(loc.getScore().toString());
+				for (AttrType attr : staticScoreAttributes){
+					if (si==0)
+						data.add((String.valueOf(loc.getAttribute(attr).data)));
+					else if(si==1)
+						data.add((String.valueOf(minValue(attr))));
+					else if(si==2)
+						data.add((String.valueOf(maxValue(attr))));
+					else if(si==3)
+						data.add((String.valueOf(loc.getAttribute(attr).score)));
+						
+				}
+				df.addDataRow(data);
+			}
 		}
 		df.write(summaryFile,false);
 		//df = new DataFrame(summaryFile);

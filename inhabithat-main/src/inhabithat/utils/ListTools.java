@@ -1,6 +1,7 @@
 package inhabithat.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class ListTools {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Convert from list of Object to list of String using the formula toString() with separator sep
 	 */
@@ -40,5 +41,13 @@ public class ListTools {
 				ret +=sep;
 		}
 		return ret;
+	}
+	/**
+	 * Concatenate two arrays
+	 */
+	public static <T> T[] concat(T[] first, T[] second) {
+		T[] result = Arrays.copyOf(first, first.length + second.length);
+		System.arraycopy(second, 0, result, first.length, second.length);
+		return result;
 	}
 }

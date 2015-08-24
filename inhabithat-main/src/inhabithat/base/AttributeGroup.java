@@ -40,11 +40,11 @@ public class AttributeGroup extends AbstractAttribute{
 		}
 		
 	}
-	public double getAttributeData(AttrType attr) {
+	public Attribute getAttribute(AttrType attr) {
 		if (attr.depth==depth()+1)//Attribute is one of this group's attributes
-			return ((Attribute)attributes[attr.idx]).data;
+			return (Attribute)attributes[attr.idx];
 		else{//atribute is lower in the hierarachy, part of a sub-group of this group
-			return ((AttributeGroup)attributes[attr.path[depth()+1].idx]).getAttributeData(attr);
+			return ((AttributeGroup)attributes[attr.path[depth()+1].idx]).getAttribute(attr);
 		}
 	}
 	public String toString(){return type.toString();}
