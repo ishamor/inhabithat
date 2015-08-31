@@ -106,7 +106,15 @@ public class AttributeDB {
 		public boolean isGroup(){
 			return children!= null;
 		}
-
+		/**
+		 * Return the index to the array in depth 'depth' that holds the rest of the path to this attrType
+		 */
+		public int pathIndex(int depth){
+			if (depth>=path.length)
+				return idx;
+			else
+				return path[depth].idx;
+		}
 		public static List<AttrType> botAttributes = new ArrayList<AttrType>();
 		public static int numBotAttributes;//number of low level attributes carrying data
 		public static AttrType[] topAttributes;
@@ -291,7 +299,7 @@ public class AttributeDB {
 						data.add((String.valueOf(maxValue(attr))));
 					else if(si==3)
 						data.add((String.valueOf(loc.getAttribute(attr).score)));
-						
+
 				}
 				df.addDataRow(data);
 			}

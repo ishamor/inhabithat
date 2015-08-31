@@ -109,7 +109,7 @@ public class AttributeGroup extends AbstractAttribute{
 			weight = filter.weight;
 		}
 		else{
-			int arrayIndx = filter.attrType.path[type.depth].idx;
+			int arrayIndx = filter.attrType.pathIndex(type.depth+1);
 			attributes[arrayIndx].filter(filter);
 		}
 		

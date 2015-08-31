@@ -1,7 +1,9 @@
 package compare.filter;
 
 import inhabithat.base.AttributeDB;
+import inhabithat.base.AttributeDB.AttrType;
 import inhabithat.base.Locale;
+import inhabithat.base.LocaleName;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,11 +37,15 @@ public class FilterTop {
 	}
 	public static void main(String[] args){
 		List<AbstractFilter> filters = new ArrayList<AbstractFilter>();
+		LocaleName mnState = new LocaleName("california");
+		AttributeFilter f1 = new AttributeFilter(AttrType.TEMP_AVG_WTR_LOW,AbstractFilter.MAX_WEIGHT,-30,0);
+		filters.add(f1);
+		filters.add(new LocaleFilter(mnState));
 		List<Locale> sorted = filter(filters);
-		AttributeDB.createSummaryFiles2(sorted);
+		//AttributeDB.createSummaryFiles2(sorted);
 		
 		for (int li=0; li<50;++li){
-			System.out.println(sorted.get(li));
+			System.out.println(sorted.get(li)+"\t"+sorted.get(li).getScore());
 		}
 	}
 }

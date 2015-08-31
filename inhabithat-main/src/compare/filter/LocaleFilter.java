@@ -5,6 +5,9 @@ import inhabithat.base.LocaleName;
 
 public class LocaleFilter extends AbstractFilter {
 	public LocaleName state;
+	public LocaleFilter(LocaleName filterState){
+		this.state = filterState;
+	}
 
 	public Double getFit(Locale locale) {
 		if (locale.state.equals(state))
@@ -12,5 +15,7 @@ public class LocaleFilter extends AbstractFilter {
 		else
 			return AbstractFilter.MIN_FIT;
 	}
-
+	public String toString(){
+		return state.toString();
+	}
 }
